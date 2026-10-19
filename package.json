@@ -1,0 +1,15 @@
+{
+  "name": "tamizh-real-estate",
+  "version": "1.0.0",
+  "description": "Official Web Portal and Real Estate Management Suite for Tamizh Real Estate - K. Kulasekaran",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "pg": "^8.13.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

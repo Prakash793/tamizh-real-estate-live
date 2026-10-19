@@ -1,0 +1,72 @@
+[
+  {
+    "id": "panel_1",
+    "title": "Layout Promotion",
+    "shortDescription": "Promoting residential layouts and plots with clear property details and buyer enquiries.",
+    "description": "Promoting residential layouts and plots with clear property details. Connecting landowners with interested buyers.",
+    "image": "/images/services/01_plot_promoting.jpg",
+    "isIllustrative": false,
+    "buttonText": "Explore Layouts",
+    "buttonLink": "#listings",
+    "categoryFilter": "Layout Promotion",
+    "displayOrder": 1,
+    "isEnabled": true,
+    "updatedAt": "2026-10-16T12:02:06.555Z"
+  },
+  {
+    "id": "panel_2",
+    "title": "Buying & Selling Resale Plots",
+    "shortDescription": "Connecting buyers and sellers with suitable resale plots and property assistance.",
+    "description": "Helping buyers find suitable resale plots and landowners connect with potential buyers. Assistance with property details and site visits.",
+    "image": "/images/services/02_resale_plot_promoting.jpg",
+    "isIllustrative": false,
+    "buttonText": "Browse Resale Plots",
+    "buttonLink": "#listings",
+    "categoryFilter": "Buying & Selling Resale Plots",
+    "displayOrder": 2,
+    "isEnabled": true,
+    "updatedAt": "2026-10-16T09:24:03.322Z"
+  },
+  {
+    "id": "panel_4",
+    "title": "Building Construction",
+    "shortDescription": "Guidance for residential homes, commercial buildings, and construction projects.",
+    "description": "Guidance for residential homes and commercial building projects. Support tailored to your property and construction requirements.",
+    "image": "/uploads/service_panel_1792152080376_3980c2e99ad1.png",
+    "isIllustrative": false,
+    "buttonText": "Explore Building Services",
+    "buttonLink": "#listings",
+    "categoryFilter": "Building & Construction",
+    "displayOrder": 3,
+    "isEnabled": true,
+    "updatedAt": "2026-10-18T15:40:00.000Z"
+  },
+  {
+    "id": "panel_3",
+    "title": "Farmland Development",
+    "shortDescription": "Exploring agricultural land opportunities and supporting property enquiries.",
+    "description": "Explore agricultural land opportunities with guidance on location, access, and boundaries. Connecting landowners with interested buyers.",
+    "image": "/uploads/service_panel_1792146700695_169f8e79000e.png",
+    "isIllustrative": false,
+    "buttonText": "Explore Farmland",
+    "buttonLink": "#listings",
+    "categoryFilter": "Farmland Development",
+    "displayOrder": 4,
+    "isEnabled": true,
+    "updatedAt": "2026-10-18T15:40:00.000Z"
+  },
+  {
+    "id": "panel_5",
+    "title": "Rental Homes & Flats",
+    "shortDescription": "Find rental homes and flats that match your location, budget, and needs.",
+    "description": "Find suitable rental homes and flats based on your location, budget, and needs. Helping tenants and property owners connect.",
+    "image": "/uploads/service_panel_1792152036169_25098949c5b8.png",
+    "isIllustrative": false,
+    "buttonText": "Find Rental Properties",
+    "buttonLink": "#listings",
+    "categoryFilter": "Rental Homes & Flats",
+    "displayOrder": 5,
+    "isEnabled": true,
+    "updatedAt": "2026-10-16T12:00:36.184Z"
+  }
+]
