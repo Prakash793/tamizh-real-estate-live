@@ -47,39 +47,47 @@
     </div>
   </header>
 
-  <!-- Login / Setup Box -->
-  <main class="max-w-md w-full mx-auto px-4 py-12 flex-1 flex items-center">
-    <div class="glass-navy p-8 rounded-3xl border border-amber-500/30 shadow-2xl w-full">
-      <div class="text-center mb-6">
-        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-400/30 flex items-center justify-center mx-auto mb-3 text-amber-400 text-xl font-bold">
+  <!-- Login / Setup Box (Enlarged for clear visibility & easy operation) -->
+  <main class="max-w-xl w-full mx-auto px-4 sm:px-6 py-14 flex-1 flex items-center justify-center">
+    <div class="glass-navy p-8 sm:p-12 rounded-3xl border-2 border-amber-500/40 shadow-[0_20px_70px_rgba(0,0,0,0.85)] w-full">
+      <div class="text-center mb-8">
+        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-amber-500/10 border-2 border-amber-400/40 flex items-center justify-center mx-auto mb-4 text-amber-400 text-3xl sm:text-4xl font-bold shadow-[0_0_25px_rgba(245,158,11,0.2)]">
           🔒
         </div>
-        <h1 id="authTitle" class="text-xl font-bold text-white">Administrator Login</h1>
-        <p id="authSubtitle" class="text-xs text-slate-400 mt-1">Sign in to access the Live Manager dashboard.</p>
+        <h1 id="authTitle" class="text-2xl sm:text-3xl font-extrabold text-white tracking-wide">Administrator Login</h1>
+        <p id="authSubtitle" class="text-sm sm:text-base text-slate-300 mt-2 font-medium">Sign in to access the Live Manager dashboard.</p>
       </div>
 
-      <div id="authAlert" class="hidden text-xs p-3 rounded-xl mb-4 text-center font-medium"></div>
+      <div id="authAlert" class="hidden text-sm p-4 rounded-2xl mb-6 text-center font-bold"></div>
 
-      <form id="loginForm" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+      <form id="loginForm" onsubmit="handleAuthSubmit(event)" class="space-y-6">
         <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">Administrator Username / Email</label>
-          <input type="text" id="username" required placeholder="Enter administrator username" class="w-full text-xs px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition">
+          <label class="block text-sm sm:text-base font-bold text-slate-200 mb-2">Administrator Username / Email</label>
+          <input type="text" id="username" required placeholder="Enter administrator username" class="w-full text-base sm:text-lg px-5 py-3.5 rounded-2xl bg-slate-900/90 border-2 border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition shadow-inner">
         </div>
 
         <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">Password</label>
-          <input type="password" id="password" required placeholder="Enter password" class="w-full text-xs px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition">
-          <p id="passwordHint" class="hidden text-[10px] text-slate-400 mt-1">Minimum 8 characters.</p>
+          <label class="block text-sm sm:text-base font-bold text-slate-200 mb-2">Password</label>
+          <div class="relative flex items-center">
+            <input type="password" id="password" required placeholder="Enter password" class="w-full text-base sm:text-lg pl-5 pr-14 py-3.5 rounded-2xl bg-slate-900/90 border-2 border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition shadow-inner">
+            <button type="button" onclick="togglePasswordVisibility('password', 'eyeIcon')" class="absolute right-3.5 p-2 rounded-xl text-slate-400 hover:text-amber-300 hover:bg-slate-800/80 transition" title="Show/Hide Password" aria-label="Toggle password visibility">
+              <svg id="eyeIcon" class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+                <!-- Eye Open Icon (default) -->
+                <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+              </svg>
+            </button>
+          </div>
+          <p id="passwordHint" class="hidden text-xs sm:text-sm text-slate-400 mt-1.5 font-medium">Minimum 8 characters.</p>
         </div>
 
-        <button type="submit" id="submitBtn" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-xs tracking-wider uppercase shadow-xl transition">
+        <button type="submit" id="submitBtn" class="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-black text-sm sm:text-base tracking-wider uppercase shadow-[0_8px_30px_rgba(245,158,11,0.35)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
           Sign In to Dashboard
         </button>
       </form>
     </div>
   </main>
 
-  <footer class="py-4 text-center text-xs text-slate-500 border-t border-slate-900">
+  <footer class="py-5 text-center text-xs sm:text-sm text-slate-400 border-t border-slate-900 font-medium">
     Tamizh Real Estate • Secure session cookies with Strict policy
   </footer>
 
@@ -154,6 +162,22 @@
         alertBox.className = "text-xs p-3 rounded-xl mb-4 text-center font-medium bg-rose-950/80 text-rose-300 border border-rose-500/40";
         alertBox.innerText = "Network error communicating with server.";
         alertBox.classList.remove('hidden');
+      }
+    }
+
+    function togglePasswordVisibility(inputId, iconId) {
+      const input = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+      if (!input || !icon) return;
+
+      if (input.type === 'password') {
+        input.type = 'text';
+        // Eye Slash Icon (hidden state)
+        icon.innerHTML = '<path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.44-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>';
+      } else {
+        input.type = 'password';
+        // Eye Open Icon (visible state)
+        icon.innerHTML = '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>';
       }
     }
 
