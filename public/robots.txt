@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /admin-login.html
+Disallow: /admin.html
+Disallow: /api/admin/
+Disallow: /api/auth/
+
+Sitemap: https://tamizhrealestate.in/sitemap.xml

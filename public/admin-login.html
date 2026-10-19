@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tamizh Real Estate - Administrator Sign In</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-lux { font-family: 'Cinzel', serif; }
+    .gold-gradient {
+      background: linear-gradient(135deg, #FBE089 0%, #DFAC43 50%, #B8860B 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .glass-navy {
+      background: rgba(6, 16, 33, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(223, 172, 67, 0.25);
+    }
+  </style>
+</head>
+<body class="bg-[#030712] text-slate-100 min-h-screen antialiased flex flex-col justify-between">
+
+  <!-- Header -->
+  <header class="glass-navy border-b border-amber-500/20 py-3.5 px-4">
+    <div class="max-w-6xl mx-auto flex justify-between items-center">
+      <div class="flex items-center gap-3.5 sm:gap-4 lg:gap-5">
+        <a href="/" class="group">
+          <img src="/logo.png" alt="Tamizh Real Estate Logo" class="w-18 h-18 sm:w-22 sm:h-22 lg:w-24 lg:h-24 object-contain rounded-full border-[2.5px] border-amber-400 shadow-[0_0_25px_rgba(218,165,32,0.55)] group-hover:scale-105 transition flex-shrink-0 bg-slate-950">
+        </a>
+        <div>
+          <div class="text-base sm:text-lg lg:text-xl font-bold text-white flex items-center gap-2">
+            <span class="gold-gradient font-lux font-bold tracking-wide">TAMIZH REAL ESTATE</span>
+            <span id="envBadge" class="text-[9px] font-extrabold px-2 py-0.5 rounded bg-blue-900/60 text-blue-300 border border-blue-500/30">SECURE PORTAL</span>
+          </div>
+          <div class="text-xs text-slate-300 font-medium">Prop: K. Kulasekaran • Official Management Authentication</div>
+        </div>
+      </div>
+
+      <a href="/" class="text-xs text-slate-300 hover:text-white transition flex items-center gap-1">
+        ← Back to Website
+      </a>
+    </div>
+  </header>
+
+  <!-- Login / Setup Box -->
+  <main class="max-w-md w-full mx-auto px-4 py-12 flex-1 flex items-center">
+    <div class="glass-navy p-8 rounded-3xl border border-amber-500/30 shadow-2xl w-full">
+      <div class="text-center mb-6">
+        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-400/30 flex items-center justify-center mx-auto mb-3 text-amber-400 text-xl font-bold">
+          🔒
+        </div>
+        <h1 id="authTitle" class="text-xl font-bold text-white">Administrator Login</h1>
+        <p id="authSubtitle" class="text-xs text-slate-400 mt-1">Sign in to access the Live Manager dashboard.</p>
+      </div>
+
+      <div id="authAlert" class="hidden text-xs p-3 rounded-xl mb-4 text-center font-medium"></div>
+
+      <form id="loginForm" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Administrator Username / Email</label>
+          <input type="text" id="username" required placeholder="Enter administrator username" class="w-full text-xs px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition">
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Password</label>
+          <input type="password" id="password" required placeholder="Enter password" class="w-full text-xs px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition">
+          <p id="passwordHint" class="hidden text-[10px] text-slate-400 mt-1">Minimum 8 characters.</p>
+        </div>
+
+        <button type="submit" id="submitBtn" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-xs tracking-wider uppercase shadow-xl transition">
+          Sign In to Dashboard
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <footer class="py-4 text-center text-xs text-slate-500 border-t border-slate-900">
+    Tamizh Real Estate • Secure session cookies with Strict policy
+  </footer>
+
+  <script>
+    let isSetupMode = false;
+
+    async function checkStatus() {
+      try {
+        const res = await fetch('/api/auth/status');
+        const data = await res.json();
+
+        // If user is already authenticated, redirect immediately to dashboard
+        if (data.authenticated) {
+          window.location.href = '/admin';
+          return;
+        }
+
+        if (data.environment === 'production') {
+          document.getElementById('envBadge').innerText = 'PRODUCTION LIVE';
+          document.getElementById('envBadge').className = 'text-[9px] font-extrabold px-2 py-0.5 rounded bg-emerald-900/60 text-emerald-300 border border-emerald-500/30';
+        } else {
+          document.getElementById('envBadge').innerText = 'LOCAL DEV';
+        }
+
+        if (!data.hasAdmin) {
+          isSetupMode = true;
+          document.getElementById('authTitle').innerText = 'Initial Admin Setup';
+          document.getElementById('authSubtitle').innerText = 'Choose your administrator username and secure password.';
+          document.getElementById('submitBtn').innerText = 'Create Master Account & Proceed';
+          document.getElementById('passwordHint').classList.remove('hidden');
+        } else {
+          isSetupMode = false;
+          document.getElementById('authTitle').innerText = 'Administrator Login';
+          document.getElementById('authSubtitle').innerText = 'Sign in to access the Live Manager dashboard.';
+          document.getElementById('submitBtn').innerText = 'Sign In to Dashboard';
+          document.getElementById('passwordHint').classList.add('hidden');
+        }
+      } catch (err) {
+        console.error("Auth check failed:", err);
+      }
+    }
+
+    async function handleAuthSubmit(e) {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const alertBox = document.getElementById('authAlert');
+
+      const endpoint = isSetupMode ? '/api/auth/setup' : '/api/auth/login';
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          alertBox.className = "text-xs p-3 rounded-xl mb-4 text-center font-medium bg-emerald-950/80 text-emerald-300 border border-emerald-500/40";
+          alertBox.innerText = isSetupMode ? "Admin account created! Redirecting to dashboard..." : "Login successful! Redirecting to dashboard...";
+          alertBox.classList.remove('hidden');
+          setTimeout(() => {
+            window.location.href = '/admin';
+          }, 600);
+        } else {
+          alertBox.className = "text-xs p-3 rounded-xl mb-4 text-center font-medium bg-rose-950/80 text-rose-300 border border-rose-500/40";
+          alertBox.innerText = data.error || "Authentication failed.";
+          alertBox.classList.remove('hidden');
+        }
+      } catch (err) {
+        alertBox.className = "text-xs p-3 rounded-xl mb-4 text-center font-medium bg-rose-950/80 text-rose-300 border border-rose-500/40";
+        alertBox.innerText = "Network error communicating with server.";
+        alertBox.classList.remove('hidden');
+      }
+    }
+
+    checkStatus();
+  </script>
+</body>
+</html>
