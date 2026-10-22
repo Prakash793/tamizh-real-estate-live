@@ -250,23 +250,23 @@
             </div>
           </div>
 
-          <!-- Plot Specific Photo / Ground Image Upload -->
-          <div class="p-3 rounded-xl bg-slate-950/70 border border-slate-800 space-y-2">
-            <label class="block text-[11px] font-bold text-amber-300 uppercase tracking-wider">Particular Plot Photo / Ground View (Optional)</label>
-            <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-              <div class="w-20 h-20 rounded-lg bg-slate-900 border border-slate-700 overflow-hidden flex items-center justify-center flex-shrink-0">
-                <img id="plotImgPreview" src="" alt="Plot Preview" class="w-full h-full object-cover hidden">
-                <span id="plotImgPlaceholder" class="text-[10px] text-slate-500 text-center px-1">No Plot Photo</span>
-              </div>
-              <div class="flex-1 space-y-2">
-                <input type="file" id="plotImageFileInput" accept="image/jpeg,image/png,image/webp" onchange="previewPlotImageFile(this)" class="w-full text-xs text-slate-300 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-slate-800 file:text-amber-300 hover:file:bg-slate-700 cursor-pointer">
-                <div class="flex items-center gap-2">
-                  <button type="button" onclick="clearPlotImageSelection()" class="px-2.5 py-1 rounded-lg bg-rose-600/20 text-rose-300 hover:bg-rose-600/30 text-[11px] font-bold border border-rose-500/30 transition">
-                    ✕ Remove Photo
-                  </button>
-                  <span class="text-[10px] text-slate-400">JPG, PNG, or WebP. Upload specific plot corner stone, frontage, or road facing view.</span>
-                </div>
-              </div>
+          <!-- Plot Multiple Photos & Multi-Angle Gallery Upload -->
+          <div class="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-3">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <label class="block text-xs font-bold text-amber-300 uppercase tracking-wider">
+                📸 Plot Photos & Different Angles (<span id="plotGalleryCount">0</span>)
+              </label>
+              <span class="text-[11px] text-slate-400">Upload multiple photos showing frontage, boundary stone, road access, and side angles.</span>
+            </div>
+
+            <!-- Existing Plot Gallery Photos Preview List -->
+            <div id="plotGalleryPreviewList" class="flex flex-wrap gap-3 min-h-[60px] p-2.5 rounded-xl bg-slate-900/80 border border-slate-700 items-center">
+              <!-- Populated via JS -->
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-center gap-3 pt-1">
+              <input type="file" id="plotMultiFileInput" multiple accept="image/jpeg,image/png,image/webp" onchange="handlePlotMultiFileSelect(this)" class="w-full text-xs text-slate-300 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-amber-500 file:text-slate-950 hover:file:bg-amber-400 cursor-pointer">
+              <span class="text-[11px] text-slate-400 whitespace-nowrap">Select 1 or more images (JPG, PNG, WebP)</span>
             </div>
           </div>
 
@@ -2447,37 +2447,52 @@
       });
     }
 
-    let currentPlotImageBase64 = '';
+    let currentPlotGallery = [];
 
-    function previewPlotImageFile(input) {
-      if (input.files && input.files[0]) {
-        const file = input.files[0];
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          currentPlotImageBase64 = e.target.result;
-          const preview = document.getElementById('plotImgPreview');
-          const placeholder = document.getElementById('plotImgPlaceholder');
-          if (preview) {
-            preview.src = currentPlotImageBase64;
-            preview.classList.remove('hidden');
-          }
-          if (placeholder) placeholder.classList.add('hidden');
-        };
-        reader.readAsDataURL(file);
+    function renderPlotGalleryPreviews() {
+      const list = document.getElementById('plotGalleryPreviewList');
+      const count = document.getElementById('plotGalleryCount');
+      if (!list) return;
+      list.innerHTML = '';
+      if (count) count.innerText = currentPlotGallery.length;
+
+      if (currentPlotGallery.length === 0) {
+        list.innerHTML = '<span class="text-xs text-slate-500 italic p-1">No plot photos uploaded yet. Select images below.</span>';
+        return;
       }
+
+      currentPlotGallery.forEach((imgUrl, idx) => {
+        const item = document.createElement('div');
+        item.className = "relative group w-20 h-20 rounded-xl overflow-hidden border border-slate-700 bg-slate-950 flex-shrink-0 shadow-md";
+        item.innerHTML = `
+          <img src="${imgUrl}" class="w-full h-full object-cover">
+          ${idx === 0 ? '<span class="absolute bottom-1 left-1 bg-amber-500 text-slate-950 text-[9px] font-black px-1.5 py-0.5 rounded shadow">Main</span>' : ''}
+          <button type="button" onclick="removePlotGalleryImage(${idx})" class="absolute top-1 right-1 w-5 h-5 rounded-full bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold flex items-center justify-center shadow transition" title="Delete photo">✕</button>
+        `;
+        list.appendChild(item);
+      });
     }
 
-    function clearPlotImageSelection() {
-      currentPlotImageBase64 = '';
-      const fileInput = document.getElementById('plotImageFileInput');
-      if (fileInput) fileInput.value = '';
-      const preview = document.getElementById('plotImgPreview');
-      const placeholder = document.getElementById('plotImgPlaceholder');
-      if (preview) {
-        preview.src = '';
-        preview.classList.add('hidden');
+    function removePlotGalleryImage(index) {
+      currentPlotGallery.splice(index, 1);
+      renderPlotGalleryPreviews();
+    }
+
+    async function handlePlotMultiFileSelect(input) {
+      if (!input.files || input.files.length === 0) return;
+      const files = Array.from(input.files);
+      for (const file of files) {
+        try {
+          const url = await uploadImageToServer(file, 'plot');
+          if (url && !currentPlotGallery.includes(url)) {
+            currentPlotGallery.push(url);
+          }
+        } catch (err) {
+          console.error("Failed to upload plot image:", err);
+        }
       }
-      if (placeholder) placeholder.classList.remove('hidden');
+      input.value = '';
+      renderPlotGalleryPreviews();
     }
 
     function editPlotInForm(plotId) {
@@ -2493,27 +2508,20 @@
       document.getElementById('plotStatusInput').value = (plot.status === 'Active' ? 'Available' : (plot.status || 'Available'));
       document.getElementById('plotNotesInput').value = plot.notes || '';
 
-      // Set Plot Image
-      const preview = document.getElementById('plotImgPreview');
-      const placeholder = document.getElementById('plotImgPlaceholder');
-      const fileInput = document.getElementById('plotImageFileInput');
-      if (fileInput) fileInput.value = '';
-
-      if (plot.image) {
-        currentPlotImageBase64 = plot.image;
-        if (preview) {
-          preview.src = plot.image;
-          preview.classList.remove('hidden');
-        }
-        if (placeholder) placeholder.classList.add('hidden');
-      } else {
-        currentPlotImageBase64 = '';
-        if (preview) {
-          preview.src = '';
-          preview.classList.add('hidden');
-        }
-        if (placeholder) placeholder.classList.remove('hidden');
+      // Initialize Plot Gallery (aggregating image & gallery)
+      currentPlotGallery = [];
+      if (plot.image && String(plot.image).trim() !== '') {
+        currentPlotGallery.push(plot.image);
       }
+      if (Array.isArray(plot.gallery)) {
+        plot.gallery.forEach(u => {
+          if (u && !currentPlotGallery.includes(u)) currentPlotGallery.push(u);
+        });
+      }
+      renderPlotGalleryPreviews();
+
+      const multiInput = document.getElementById('plotMultiFileInput');
+      if (multiInput) multiInput.value = '';
 
       document.getElementById('plotFormHeading').innerHTML = `<span class="text-amber-400">✏️</span> Editing ${escapeHtml(plot.number)} (ID #${plot.id})`;
       document.getElementById('savePlotBtn').innerText = "Update Plot Details";
@@ -2533,7 +2541,11 @@
       document.getElementById('plotStatusInput').value = 'Available';
       document.getElementById('plotNotesInput').value = '';
 
-      clearPlotImageSelection();
+      currentPlotGallery = [];
+      renderPlotGalleryPreviews();
+
+      const multiInput = document.getElementById('plotMultiFileInput');
+      if (multiInput) multiInput.value = '';
 
       document.getElementById('plotFormHeading').innerHTML = '<span class="text-amber-400">＋</span> Add New Plot to Selected Layout';
       document.getElementById('savePlotBtn').innerText = "Save Plot to Layout";
@@ -2585,16 +2597,10 @@
       saveBtn.innerText = "Saving...";
 
       try {
-        // Upload photo if a new file is chosen
-        const fileInput = document.getElementById('plotImageFileInput');
-        if (fileInput && fileInput.files && fileInput.files[0]) {
-          const uploadedUrl = await uploadImageToServer(fileInput.files[0], 'plot');
-          payload.image = uploadedUrl;
-        } else if (currentPlotImageBase64) {
-          payload.image = currentPlotImageBase64;
-        } else {
-          payload.image = '';
-        }
+        // Set Primary Image and Multiple Gallery Images
+        payload.gallery = Array.isArray(currentPlotGallery) ? currentPlotGallery : [];
+        payload.image = payload.gallery.length > 0 ? payload.gallery[0] : '';
+
         let res;
         if (editId) {
           res = await adminFetch(`/api/admin/plots/${editId}`, {
