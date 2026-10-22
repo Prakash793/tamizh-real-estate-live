@@ -143,6 +143,38 @@
       font-size: 0.875rem !important;
       line-height: 1.4rem !important;
     }
+
+    /* STRICT SINGLE-PAGE PRINT STYLING */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 8mm;
+      }
+      html, body {
+        height: 100% !important;
+        overflow: hidden !important;
+        background: #ffffff !important;
+        color: #0f172a !important;
+      }
+      /* Hide every single element on the page */
+      body > * {
+        display: none !important;
+      }
+      /* Only display the print brochure container */
+      #printBrochureContainer {
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        page-break-after: avoid !important;
+        page-break-inside: avoid !important;
+      }
+      #printBrochureContainer * {
+        visibility: visible !important;
+      }
+    }
   </style>
 </head>
 <body class="bg-[#030712] text-slate-100 antialiased selection:bg-amber-500 selection:text-slate-950">
@@ -176,7 +208,7 @@
   </div>
 
   <!-- Main Navigation Bar (Full width, distinctly prominent large circular logo, crisp gold branding) -->
-  <header class="glass-navy sticky top-0 z-40 border-b border-amber-500/20 w-full">
+  <header id="topNavbar" class="glass-navy sticky top-0 z-40 border-b border-amber-500/20 w-full">
     <div class="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-2.5 flex justify-between items-center gap-4">
       <!-- Brand & Large Circular Logo -->
       <a href="#" class="flex items-center gap-3 sm:gap-4 lg:gap-5 group py-1 flex-shrink-0">
@@ -342,9 +374,14 @@
             <h3 id="layoutDocDisplayTitle" class="text-xl sm:text-2xl font-black text-white tracking-wide font-lux gold-gradient">Sowbhagya Nagar Layout - Sanctioned Plan</h3>
             <span id="layoutDocDisplaySanction" class="text-xs sm:text-sm font-bold text-amber-400 tracking-wide block mt-0.5">DTCP Approved Layout Plan</span>
           </div>
-          <button onclick="toggleLayoutBlueprintZoom()" class="text-xs sm:text-sm bg-slate-800 hover:bg-slate-700 text-amber-300 font-extrabold px-4 py-2 rounded-xl border border-amber-400/30 transition flex items-center gap-1.5 shadow-md hover:scale-105">
-            🔍 Zoom Blueprint Drawing
-          </button>
+          <div class="flex items-center gap-2">
+            <button onclick="downloadActiveBlueprint()" class="text-xs sm:text-sm bg-teal-600 hover:bg-teal-500 text-white font-extrabold px-4 py-2 rounded-xl border border-teal-400/40 transition flex items-center gap-1.5 shadow-md hover:scale-105">
+              <span>📥</span> Download Blueprint Plan
+            </button>
+            <button onclick="toggleLayoutBlueprintZoom()" class="text-xs sm:text-sm bg-slate-800 hover:bg-slate-700 text-amber-300 font-extrabold px-4 py-2 rounded-xl border border-amber-400/30 transition flex items-center gap-1.5 shadow-md hover:scale-105">
+              <span>🔍</span> Zoom Drawing
+            </button>
+          </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
@@ -663,6 +700,28 @@
           </a>
         </div>
       </div>
+
+      <!-- Quick Plot Registration & Stamp Duty Estimator -->
+      <div class="mt-8 p-6 rounded-3xl glass-navy border border-amber-500/20 max-w-5xl mx-auto space-y-4 shadow-xl">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">🧮</span>
+          <h3 class="text-sm sm:text-base font-extrabold text-white">Tamil Nadu Plot Registration & Stamp Duty Estimator (Approx. 7% + 4%)</h3>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+          <div>
+            <label class="block text-slate-400 font-medium mb-1">Plot Extent (Sq.Ft):</label>
+            <input type="number" id="regCalcSqft" value="1200" oninput="calculateRegistrationCost()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-bold focus:border-amber-400">
+          </div>
+          <div>
+            <label class="block text-slate-400 font-medium mb-1">Rate per Sq.Ft (₹):</label>
+            <input type="number" id="regCalcRate" value="1500" oninput="calculateRegistrationCost()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-bold focus:border-amber-400">
+          </div>
+          <div class="p-3 bg-slate-900/90 rounded-xl border border-slate-700 flex flex-col justify-center">
+            <span class="text-slate-400 text-[11px] block">Est. Land Cost + Regn/Stamp:</span>
+            <span id="regCalcTotal" class="text-amber-300 font-black text-sm sm:text-base">₹18,00,000 + ₹1,98,000</span>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -716,6 +775,49 @@
     </div>
   </section>
 
+  <!-- TRS PROPERTY LEGAL VERIFICATION CHECKLIST (FAQ / Trust Accordion) -->
+  <section class="py-16 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-14 w-full bg-[#030a17] border-t border-amber-500/20">
+    <div class="max-w-5xl mx-auto space-y-8">
+      <div class="text-center max-w-2xl mx-auto">
+        <span class="text-xs sm:text-sm font-bold text-amber-400 uppercase tracking-widest font-tamil">சட்டப்பூர்வ சரிபார்ப்பு</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Property Legal Verification & FAQ</h2>
+        <p class="text-xs sm:text-sm text-slate-300 mt-2">Every listing undergoes 100% field, document, and legal scrutiny by Mr. K. Kulasekaran.</p>
+      </div>
+
+      <div class="space-y-3">
+        <details class="group p-4 sm:p-5 rounded-2xl bg-slate-900/80 border border-slate-700 open:border-amber-400/50 transition">
+          <summary class="font-extrabold text-sm sm:text-base text-white cursor-pointer flex items-center justify-between list-none">
+            <span class="flex items-center gap-2"><span class="text-emerald-400">✓</span> 1. How does Tamizh Real Estate verify 30-Year Encumbrance Certificates (EC)?</span>
+            <span class="text-amber-400 transition group-open:rotate-180">▼</span>
+          </summary>
+          <p class="text-xs sm:text-sm text-slate-300 mt-3 pl-6 leading-relaxed">
+            We extract the certified 30-year online and offline Encumbrance Certificate from the Sub-Registrar Office (Guduvanchery / Chengalpattu). This ensures zero prior bank mortgages, no court disputes, and unbroken ancestral title continuity.
+          </p>
+        </details>
+
+        <details class="group p-4 sm:p-5 rounded-2xl bg-slate-900/80 border border-slate-700 open:border-amber-400/50 transition">
+          <summary class="font-extrabold text-sm sm:text-base text-white cursor-pointer flex items-center justify-between list-none">
+            <span class="flex items-center gap-2"><span class="text-emerald-400">✓</span> 2. How is Immediate Patta Transfer guaranteed after registration?</span>
+            <span class="text-amber-400 transition group-open:rotate-180">▼</span>
+          </summary>
+          <p class="text-xs sm:text-sm text-slate-300 mt-3 pl-6 leading-relaxed">
+            All our approved layout plots have individual survey subdivision numbers (உட்பிரிவு பட்டா). Immediately after your sale deed registration, our team coordinates directly with the local Taluk Office for name transfer into your name.
+          </p>
+        </details>
+
+        <details class="group p-4 sm:p-5 rounded-2xl bg-slate-900/80 border border-slate-700 open:border-amber-400/50 transition">
+          <summary class="font-extrabold text-sm sm:text-base text-white cursor-pointer flex items-center justify-between list-none">
+            <span class="flex items-center gap-2"><span class="text-amber-400">✓</span> 3. Can I get up to 80% bank loan for layout plots?</span>
+            <span class="text-amber-400 transition group-open:rotate-180">▼</span>
+          </summary>
+          <p class="text-xs sm:text-sm text-slate-300 mt-3 pl-6 leading-relaxed">
+            Yes! Because our layout promotion projects carry DTCP and Panchayat sanctions, nationalized and leading private banks (State Bank of India, HDFC, LIC Housing Finance, and Canara Bank) approve up to 75%–80% loan amounts with swift document processing.
+          </p>
+        </details>
+      </div>
+    </div>
+  </section>
+
   <!-- TRS PROMOTIONAL & CLIENT COMMITMENT BANNER -->
   <section class="py-14 px-4 bg-gradient-to-r from-[#030a1a] via-[#091e42] to-[#030a1a] border-t border-amber-500/30">
     <div class="max-w-4xl mx-auto text-center space-y-6">
@@ -745,17 +847,29 @@
     <div class="glass-navy max-w-6xl w-full max-h-[95vh] overflow-y-auto rounded-3xl border-2 border-amber-400/50 p-5 sm:p-8 md:p-10 relative space-y-6 shadow-[0_25px_80px_rgba(0,0,0,0.95)]">
       <button onclick="closePropertyModal()" class="absolute top-4 right-4 sm:top-6 sm:right-6 text-slate-300 hover:text-white text-xl sm:text-2xl font-bold z-20 w-10 h-10 rounded-full bg-slate-900/90 hover:bg-slate-800 flex items-center justify-center border border-slate-700 transition" title="Close">✕</button>
       
-      <!-- Top Image Grid: Large Main Photo + Thumbnails -->
-      <div class="space-y-4">
-        <div class="h-64 sm:h-96 md:h-[480px] lg:h-[540px] rounded-2xl overflow-hidden relative bg-slate-950 border border-slate-700 shadow-2xl">
-          <img id="modalImg" src="" alt="Property" class="w-full h-full object-cover">
-          <span class="absolute bottom-3 right-3 bg-black/75 backdrop-blur-md text-amber-300 text-xs sm:text-sm font-bold px-3 py-1.5 rounded-xl border border-amber-400/30">
-            🔍 Click gallery photos below to switch view
-          </span>
+      <!-- Top Image Grid: Full Width Left-to-Right Large Main Photo + Thumbnails -->
+      <div class="space-y-4 w-full">
+        <div class="w-full h-72 sm:h-[420px] md:h-[500px] lg:h-[580px] rounded-2xl overflow-hidden relative bg-slate-950 border-2 border-slate-700 shadow-2xl group">
+          <img id="modalImg" src="" alt="Property" class="w-full h-full object-cover transition-all duration-300">
+          
+          <!-- Previous Photo Button -->
+          <button onclick="prevModalPhoto(event)" class="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/75 hover:bg-amber-500 hover:text-slate-950 text-white flex items-center justify-center font-bold text-xl border border-white/20 transition-all duration-200 z-10 shadow-lg" title="Previous photo (Left arrow)">
+            ‹
+          </button>
+          
+          <!-- Next Photo Button -->
+          <button onclick="nextModalPhoto(event)" class="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/75 hover:bg-amber-500 hover:text-slate-950 text-white flex items-center justify-center font-bold text-xl border border-white/20 transition-all duration-200 z-10 shadow-lg" title="Next photo (Right arrow)">
+            ›
+          </button>
+
+          <!-- Fullscreen High-Res Zoom Button -->
+          <button onclick="zoomModalPropertyImage()" class="absolute bottom-3 right-3 bg-black/80 hover:bg-amber-500 hover:text-slate-950 text-amber-300 text-xs sm:text-sm font-bold px-3 py-1.5 rounded-xl border border-amber-400/40 transition flex items-center gap-1.5 shadow-lg">
+            <span>🔍</span> Fullscreen High-Res
+          </button>
         </div>
 
-        <!-- Multiple Gallery Carousel/Thumbnails -->
-        <div id="modalGalleryThumbnails" class="flex flex-wrap gap-2.5 sm:gap-3 pt-1">
+        <!-- Multiple Gallery Carousel/Thumbnails across full width -->
+        <div id="modalGalleryThumbnails" class="flex flex-wrap gap-2.5 sm:gap-3 pt-1 w-full">
           <!-- Rendered by JS -->
         </div>
       </div>
@@ -797,12 +911,47 @@
               <span>📞</span> Call Directly
             </a>
           </div>
+
+          <!-- Share on WhatsApp with Family Button & Print Brochure Action -->
+          <div class="pt-1 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <button onclick="shareCurrentPropertyOnWhatsApp()" class="py-3 px-4 rounded-2xl bg-slate-900/90 hover:bg-slate-800 text-emerald-400 hover:text-emerald-300 border border-emerald-500/40 font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-md">
+              <span class="text-base">📲</span> WhatsApp to Family
+            </button>
+            <button onclick="printCurrentPropertyBrochure()" class="py-3 px-4 rounded-2xl bg-slate-900/90 hover:bg-slate-800 text-amber-300 hover:text-amber-200 border border-amber-500/40 font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-md">
+              <span class="text-base">🖨️</span> Print / Save PDF
+            </button>
+          </div>
         </div>
 
         <!-- Right Column: Property Information, Specifications & Available Plots Banner -->
         <div class="lg:col-span-5 space-y-4">
           <div id="modalSpecsBox" class="p-5 sm:p-6 rounded-3xl bg-slate-900/90 border-2 border-slate-700/80 text-xs sm:text-sm text-slate-200 shadow-xl">
             <!-- Rendered by JS -->
+          </div>
+
+          <!-- Verified Legal Clearance Strip (Centered & Compact in Right Column) -->
+          <div class="p-3.5 rounded-2xl bg-slate-950/80 border border-amber-500/30 space-y-2">
+            <div class="text-[11px] font-black uppercase tracking-wider text-amber-300 flex items-center justify-center gap-1.5 text-center">
+              <span>🛡️</span> Verified Legal Clearance & Loan Approvals:
+            </div>
+            <div class="grid grid-cols-4 gap-1.5 text-[10px] text-center">
+              <div class="p-1.5 rounded-lg bg-slate-900 border border-slate-800">
+                <span class="text-emerald-400 block font-black">✓ DTCP</span>
+                <span class="text-slate-400 text-[9px]">Approved</span>
+              </div>
+              <div class="p-1.5 rounded-lg bg-slate-900 border border-slate-800">
+                <span class="text-emerald-400 block font-black">✓ 30-Yr EC</span>
+                <span class="text-slate-400 text-[9px]">Clear Title</span>
+              </div>
+              <div class="p-1.5 rounded-lg bg-slate-900 border border-slate-800">
+                <span class="text-emerald-400 block font-black">✓ Patta</span>
+                <span class="text-slate-400 text-[9px]">Immediate</span>
+              </div>
+              <div class="p-1.5 rounded-lg bg-slate-900 border border-slate-800">
+                <span class="text-amber-300 block font-black">✓ Bank Loan</span>
+                <span class="text-slate-400 text-[9px]">80% Loan</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -817,11 +966,23 @@
       <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
         <!-- Left Column: Plot Main Large Photo, Multi-Angle Thumbnails & Direct WhatsApp/Call Actions -->
         <div class="md:col-span-6 space-y-4">
-          <div class="h-64 sm:h-80 md:h-[400px] rounded-2xl overflow-hidden relative bg-slate-950 border-2 border-slate-700 shadow-2xl">
+          <div class="h-64 sm:h-80 md:h-[400px] rounded-2xl overflow-hidden relative bg-slate-950 border-2 border-slate-700 shadow-2xl group">
             <img id="plotModalImg" src="" alt="Plot photo" class="w-full h-full object-cover">
+            
             <div id="plotModalPhotoBadge" class="absolute top-3 left-3 bg-black/75 backdrop-blur-md text-amber-300 text-xs font-black px-3 py-1 rounded-lg border border-amber-400/30">
               📸 On-Ground Plot Photo
             </div>
+
+            <!-- Previous Plot Angle -->
+            <button onclick="prevPlotModalPhoto(event)" class="absolute left-2.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/75 hover:bg-amber-500 hover:text-slate-950 text-white flex items-center justify-center font-bold text-lg border border-white/20 transition z-10">
+              ‹
+            </button>
+            
+            <!-- Next Plot Angle -->
+            <button onclick="nextPlotModalPhoto(event)" class="absolute right-2.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/75 hover:bg-amber-500 hover:text-slate-950 text-white flex items-center justify-center font-bold text-lg border border-white/20 transition z-10">
+              ›
+            </button>
+
             <button onclick="zoomPlotModalImage()" class="absolute bottom-3 right-3 bg-black/80 hover:bg-amber-500 hover:text-slate-950 text-amber-300 text-xs font-bold px-3 py-1.5 rounded-xl border border-amber-400/40 transition">
               🔍 Zoom Photo
             </button>
@@ -841,6 +1002,24 @@
             <a href="tel:9840615219" class="px-6 py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-sm sm:text-base border-2 border-amber-300 text-center transition shadow-[0_10px_30px_rgba(245,158,11,0.3)] flex items-center justify-center gap-2 hover:scale-[1.02]">
               <span>📞</span> Call Directly
             </a>
+          </div>
+
+          <!-- Share on WhatsApp with Family Button & Print Brochure Action -->
+          <div class="pt-1 grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button onclick="shareCurrentPlotOnWhatsApp()" class="py-2.5 px-3 rounded-2xl bg-slate-900/90 hover:bg-slate-800 text-emerald-400 hover:text-emerald-300 border border-emerald-500/40 font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-md">
+              <span class="text-sm">📲</span> Share on WhatsApp
+            </button>
+            <button onclick="printCurrentPlotBrochure()" class="py-2.5 px-3 rounded-2xl bg-slate-900/90 hover:bg-slate-800 text-amber-300 hover:text-amber-200 border border-amber-500/40 font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-md">
+              <span class="text-sm">🖨️</span> Print / Save PDF
+            </button>
+          </div>
+
+          <!-- Legal & Title Badges -->
+          <div class="flex items-center justify-around gap-2 p-2.5 rounded-xl bg-slate-950/70 border border-slate-800 text-[10px] text-slate-300 text-center">
+            <div><span class="text-emerald-400 font-bold">✓</span> DTCP Approved</div>
+            <div><span class="text-emerald-400 font-bold">✓</span> Clear Title</div>
+            <div><span class="text-emerald-400 font-bold">✓</span> Patta Passbook</div>
+            <div><span class="text-amber-300 font-bold">✓</span> Bank Loan 80%</div>
           </div>
         </div>
 
@@ -893,6 +1072,55 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Quick Site Inspection / Cab Booking Modal -->
+  <div id="siteVisitModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden items-center justify-center p-3 sm:p-6">
+    <div class="glass-navy max-w-lg w-full rounded-3xl border-2 border-amber-400/50 p-6 sm:p-8 relative space-y-5 shadow-2xl">
+      <button onclick="closeSiteVisitModal()" class="absolute top-4 right-4 text-slate-300 hover:text-white text-xl font-bold w-9 h-9 rounded-full bg-slate-900 flex items-center justify-center border border-slate-700">✕</button>
+      
+      <div>
+        <span class="text-xs font-bold text-amber-400 uppercase tracking-widest">இலவச நேரடி பார்வை</span>
+        <h3 class="text-xl sm:text-2xl font-black text-white mt-1">Book a Free Site Inspection</h3>
+        <p class="text-xs text-slate-300 mt-1">Select your preferred date & time. Mr. Kulasekaran will coordinate direct pickup or on-site meeting.</p>
+      </div>
+
+      <form onsubmit="submitSiteVisitBooking(event)" class="space-y-3.5 text-xs">
+        <div>
+          <label class="block text-slate-300 font-bold mb-1">Your Full Name *</label>
+          <input type="text" id="visitName" required placeholder="e.g. S. Ramanathan" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:border-amber-400">
+        </div>
+        <div>
+          <label class="block text-slate-300 font-bold mb-1">WhatsApp / Contact Phone *</label>
+          <input type="tel" id="visitPhone" required placeholder="e.g. 9840XXXXXX" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:border-amber-400">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-300 font-bold mb-1">Preferred Day *</label>
+            <select id="visitDay" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white focus:border-amber-400">
+              <option value="This Saturday">This Saturday</option>
+              <option value="This Sunday">This Sunday</option>
+              <option value="Weekday Morning">Weekday Morning</option>
+              <option value="Weekday Evening">Weekday Evening</option>
+              <option value="Today / Tomorrow">Immediate (Today/Tomorrow)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-slate-300 font-bold mb-1">Time Slot *</label>
+            <select id="visitTime" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white focus:border-amber-400">
+              <option value="9:00 AM - 11:00 AM">9:00 AM - 11:00 AM</option>
+              <option value="11:00 AM - 1:00 PM">11:00 AM - 1:00 PM</option>
+              <option value="3:00 PM - 5:00 PM">3:00 PM - 5:00 PM</option>
+              <option value="5:00 PM - 6:30 PM">5:00 PM - 6:30 PM</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-sm uppercase tracking-wider shadow-xl transition flex items-center justify-center gap-2">
+          <span>📅</span> Confirm Site Visit on WhatsApp
+        </button>
+      </form>
     </div>
   </div>
 
@@ -957,12 +1185,22 @@
       <div class="md:col-span-5 space-y-4">
         <h4 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-amber-400 font-lux">Office Address & Contacts</h4>
         <!-- Highlighted & Enlarged Office Location Details -->
-        <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-[#0c1e3d] to-[#061226] border-2 border-amber-400/50 shadow-[0_8px_25px_rgba(0,0,0,0.6),0_0_15px_rgba(218,165,32,0.15)] space-y-2">
-          <div class="flex items-center gap-2">
-            <span class="text-lg">📍</span>
-            <strong class="text-amber-300 text-sm sm:text-base font-extrabold uppercase tracking-wide">Official Office Location:</strong>
+        <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-[#0c1e3d] to-[#061226] border-2 border-amber-400/50 shadow-[0_8px_25px_rgba(0,0,0,0.6),0_0_15px_rgba(218,165,32,0.15)] space-y-3">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <div class="flex items-center gap-2">
+              <span class="text-xl">📍</span>
+              <strong class="text-amber-300 text-sm sm:text-base font-extrabold uppercase tracking-wide">Official Office Location:</strong>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="copyOfficeAddress(event)" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold text-xs border border-amber-500/40 shadow-md transition flex items-center gap-1.5" title="Copy full address to clipboard">
+                <span id="copyAddrIcon">📋</span> <span id="copyAddrText">Copy Address</span>
+              </button>
+              <a href="https://maps.google.com/?q=No.+01,+Sowbhagya+Nagar,+Nellikuppam+Main+Road,+Kayarambedu+603202" target="_blank" class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-xs shadow-md transition flex items-center gap-1.5 hover:scale-105">
+                <span>🗺️</span> GPS Directions
+              </a>
+            </div>
           </div>
-          <div class="text-xs sm:text-[14px] text-white font-medium leading-relaxed pl-6">
+          <div class="text-xs sm:text-[14px] text-white font-medium leading-relaxed pl-7">
             <span id="footerOfficeAddr1" class="font-bold text-amber-100">No. 01, Sowbhagya Nagar, Nellikuppam Main Road,</span><br>
             <span id="footerOfficeAddr2">Kayarambedu - 603 202, Chengalpattu District, Tamil Nadu.</span>
           </div>
@@ -1006,15 +1244,48 @@
     </div>
   </footer>
 
-  <!-- Floating WhatsApp Action (Enlarged, high-contrast, prominent luxury glow) -->
-  <a id="floatingWhatsAppBtn" href="https://wa.me/919840615219?text=Vanakkam%20Mr.%20Kulasekaran,%20I%20am%20interested%20in%20property%20details%20from%20Tamizh%20Real%20Estate" target="_blank" class="fixed bottom-7 right-7 sm:bottom-9 sm:right-9 z-50 flex items-center gap-3 sm:gap-3.5 bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white px-6 sm:px-8 py-4 sm:py-5 rounded-full shadow-[0_16px_45px_rgba(16,185,129,0.75)] hover:shadow-[0_22px_60px_rgba(16,185,129,0.95)] border-[2.5px] border-emerald-200 transition-all duration-300 hover:scale-105 active:scale-95 group">
-    <span class="relative flex h-3.5 w-3.5">
-      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-200 opacity-75"></span>
-      <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-white"></span>
-    </span>
-    <svg class="w-7 h-7 sm:w-8 sm:h-8 fill-current flex-shrink-0 group-hover:scale-110 transition duration-300 drop-shadow-md" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.044.073.044.42-.1.825z"/></svg>
-    <span class="text-base sm:text-lg lg:text-[19px] font-black tracking-wide drop-shadow-sm">Connect with us</span>
-  </a>
+  <!-- Back to Top Floating Button (Shows smoothly when scrolled down) -->
+  <button id="backToTopBtn" onclick="scrollToTop()" class="fixed bottom-7 left-7 sm:bottom-9 sm:left-9 z-50 hidden p-3.5 sm:p-4 rounded-full bg-slate-900/90 hover:bg-amber-500 text-amber-400 hover:text-slate-950 border-2 border-amber-400/60 shadow-[0_10px_30px_rgba(0,0,0,0.85)] hover:shadow-[0_12px_40px_rgba(245,158,11,0.6)] transition-all duration-300 hover:scale-110 active:scale-95 group" title="Back to Top" aria-label="Scroll back to top">
+    <svg class="w-5 h-5 sm:w-6 sm:h-6 fill-current transition-transform duration-200 group-hover:-translate-y-1" viewBox="0 0 24 24">
+      <path d="M12 4l-8 8h5v8h6v-8h5z"/>
+    </svg>
+  </button>
+
+  <!-- Dedicated Single-Page Clean Printable Brochure (Hidden on screen, visible only when printing) -->
+  <div id="printBrochureContainer" class="hidden"></div>
+
+  <!-- Floating Quick-Contact Speed Dial / Fast Menu -->
+  <div id="floatingFastContactMenu" class="fixed bottom-7 right-7 sm:bottom-9 sm:right-9 z-50 flex flex-col items-end gap-3">
+    <!-- Pop-up quick actions menu -->
+    <div id="fastContactPopup" class="hidden flex-col items-end gap-2.5 pb-2 transition-all duration-300 origin-bottom-right">
+      <!-- Direct Call -->
+      <a href="tel:9840615219" class="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs sm:text-sm shadow-xl transition-all duration-200 hover:scale-105 border border-amber-300">
+        <span>📞 Call Mr. Kulasekaran</span>
+      </a>
+      <!-- WhatsApp Consultation -->
+      <a id="floatingFastWhatsApp" href="https://wa.me/919840615219?text=Vanakkam%20Mr.%20Kulasekaran,%20I%20am%20interested%20in%20property%20details%20from%20Tamizh%20Real%20Estate" target="_blank" class="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs sm:text-sm shadow-xl transition-all duration-200 hover:scale-105 border border-emerald-400">
+        <span>💬 WhatsApp Chat</span>
+      </a>
+      <!-- GPS Navigation -->
+      <a href="https://maps.google.com/?q=No.+01,+Sowbhagya+Nagar,+Nellikuppam+Main+Road,+Kayarambedu+603202" target="_blank" class="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs sm:text-sm shadow-xl transition-all duration-200 hover:scale-105 border border-blue-400">
+        <span>🗺️ Google Maps Office</span>
+      </a>
+      <!-- Post / Sell Property -->
+      <a href="#post-property" onclick="toggleFastContactMenu()" class="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-amber-300 font-black text-xs sm:text-sm shadow-xl transition-all duration-200 hover:scale-105 border border-amber-500/40">
+        <span>🏡 Sell Your Property</span>
+      </a>
+    </div>
+
+    <!-- Main Trigger Button -->
+    <button onclick="toggleFastContactMenu()" class="flex items-center gap-3 sm:gap-3.5 bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white px-6 sm:px-8 py-4 sm:py-5 rounded-full shadow-[0_16px_45px_rgba(16,185,129,0.75)] hover:shadow-[0_22px_60px_rgba(16,185,129,0.95)] border-[2.5px] border-emerald-200 transition-all duration-300 hover:scale-105 active:scale-95 group" aria-label="Toggle contact menu">
+      <span class="relative flex h-3.5 w-3.5">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-200 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-white"></span>
+      </span>
+      <svg class="w-7 h-7 sm:w-8 sm:h-8 fill-current flex-shrink-0 group-hover:scale-110 transition duration-300 drop-shadow-md" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.044.073.044.42-.1.825z"/></svg>
+      <span id="fastContactBtnLabel" class="text-base sm:text-lg lg:text-[19px] font-black tracking-wide drop-shadow-sm">Connect with us</span>
+    </button>
+  </div>
 
   <script>
     let layoutPlotsData = [];
@@ -1025,6 +1296,250 @@
     let servicePanelsData = [];
     let socialSettingsData = {};
     let currentFilter = 'all';
+
+    function toggleFastContactMenu() {
+      const popup = document.getElementById('fastContactPopup');
+      if (!popup) return;
+      const isHidden = popup.classList.contains('hidden');
+      if (isHidden) {
+        popup.classList.remove('hidden');
+        popup.classList.add('flex');
+      } else {
+        popup.classList.remove('flex');
+        popup.classList.add('hidden');
+      }
+    }
+
+    // Scroll back to top smoothly
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Listen to scroll to display/hide Back to Top button
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('backToTopBtn');
+      if (!btn) return;
+      if (window.scrollY > 400) {
+        btn.classList.remove('hidden');
+      } else {
+        btn.classList.add('hidden');
+      }
+    });
+
+    // Single-Page Clean Brochure Print / Save PDF Functions
+    function printCurrentPropertyBrochure() {
+      if (!modalSelectedProp) return;
+      const p = modalSelectedProp;
+      const container = document.getElementById('printBrochureContainer');
+      if (!container) return;
+
+      container.innerHTML = `
+        <div style="max-width: 800px; margin: 0 auto; padding: 12px 16px; font-family: 'Segoe UI', Arial, sans-serif; color: #1e293b; line-height: 1.35; box-sizing: border-box;">
+          <!-- Header with Logo and Brand -->
+          <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #b45309; padding-bottom: 8px; margin-bottom: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <img src="/logo.png" style="width: 52px; height: 52px; object-fit: contain; border-radius: 50%; border: 2px solid #d97706;" alt="Logo">
+              <div>
+                <h1 style="margin: 0; font-size: 19px; font-weight: 800; color: #0f172a; letter-spacing: 0.5px;">TAMIZH REAL ESTATE</h1>
+                <p style="margin: 1px 0 0 0; font-size: 11px; color: #b45309; font-weight: 700;">தமிழ் ரியல் எஸ்டேட் • Approved Layouts & Property Guidance</p>
+              </div>
+            </div>
+            <div style="text-align: right; font-size: 10.5px; color: #475569;">
+              <strong style="color: #0f172a; font-size: 11.5px; display: block;">Prop: K. Kulasekaran</strong>
+              <span>📞 +91 98406 15219</span> • <span>✉️ tamizhrealestate@gmail.com</span>
+            </div>
+          </div>
+
+          <!-- FULL-WIDTH IMAGE ACROSS THE ENTIRE SHEET -->
+          <div style="width: 100%; height: 260px; border-radius: 8px; overflow: hidden; border: 1.5px solid #cbd5e1; background: #000; margin-bottom: 10px;">
+            <img src="${escapeHtml(p.image)}" style="width: 100%; height: 100%; object-fit: cover; display: block;" alt="Property Image">
+          </div>
+
+          <!-- LARGE GOLD AVAILABLE PLOTS BANNER (Full width under image) -->
+          ${(p.managePlots !== false && p.plotCount) ? `
+            <div style="width: 100%; box-sizing: border-box; background: linear-gradient(90deg, #78350f 0%, #1e1b4b 50%, #78350f 100%); border: 2px solid #f59e0b; border-radius: 8px; padding: 10px 16px; margin-bottom: 12px; text-align: center; color: #ffffff;">
+              <div style="display: inline-block; padding: 2px 10px; background: rgba(245, 158, 11, 0.25); border: 1px solid #f59e0b; border-radius: 20px; font-size: 10px; font-weight: 800; color: #fbbf24; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
+                📐 Approved Layout Plots
+              </div>
+              <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <span style="font-size: 32px; font-weight: 900; color: #fbbf24; text-shadow: 0 0 10px rgba(245, 158, 11, 0.5);">${escapeHtml(p.plotCount)}</span>
+                <span style="font-size: 17px; font-weight: 900; color: #ffffff; letter-spacing: 0.8px; text-transform: uppercase;">Available Plots in this Nagar</span>
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- PROPERTY DETAILS UNDER IMAGE & PLOTS BANNER -->
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+            <div>
+              <span style="display: inline-block; padding: 2px 8px; background: #fef3c7; color: #92400e; font-size: 10px; font-weight: 700; border-radius: 4px; text-transform: uppercase;">
+                ${escapeHtml(p.category || 'Real Estate')}
+              </span>
+              <h2 style="margin: 3px 0 1px 0; font-size: 18px; font-weight: 800; color: #0f172a;">${escapeHtml(p.title)}</h2>
+              <p style="margin: 0; font-size: 12px; color: #047857; font-weight: 700;">📍 ${escapeHtml(p.location)}</p>
+            </div>
+            <div style="text-align: right;">
+              <span style="font-size: 10px; color: #64748b; display: block; text-transform: uppercase;">Price Quote:</span>
+              <span style="font-size: 16px; font-weight: 800; color: #b45309;">To be Negotiable</span>
+            </div>
+          </div>
+
+          <!-- Specifications Matrix & Description Grid -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 10px;">
+              <h4 style="margin: 0 0 4px 0; font-size: 10.5px; text-transform: uppercase; color: #475569; font-weight: 800; border-bottom: 1px solid #e2e8f0; padding-bottom: 2px;">Property Specifications:</h4>
+              <div style="font-size: 10.5px; color: #1e293b; line-height: 1.45;">
+                ${p.specs ? `<div>${escapeHtml(p.specs)}</div>` : ''}
+                ${p.buildingType ? `<div>🏢 Building Type: <strong>${escapeHtml(p.buildingType)}</strong></div>` : ''}
+                ${p.configuration ? `<div>🛏️ Configuration: <strong>${escapeHtml(p.configuration)}</strong></div>` : ''}
+                ${p.builtUpArea ? `<div>📏 Built-up Area: <strong>${escapeHtml(p.builtUpArea)} ${escapeHtml(p.builtUpAreaUnit || 'sq.ft')}</strong></div>` : ''}
+              </div>
+            </div>
+
+            <!-- Trust Badges Strip -->
+            <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 8px 10px; display: flex; flex-direction: column; justify-content: space-around;">
+              <div style="display: flex; justify-content: space-around; text-align: center; font-size: 10px;">
+                <div><strong style="color: #15803d; font-size: 11px; display: block;">✓ DTCP Approved</strong> Sanctioned</div>
+                <div><strong style="color: #15803d; font-size: 11px; display: block;">✓ 30-Yr EC Clear</strong> Freehold Title</div>
+                <div><strong style="color: #15803d; font-size: 11px; display: block;">✓ Patta Transfer</strong> Immediate</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Description Box -->
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 10px; margin-bottom: 10px;">
+            <h4 style="margin: 0 0 3px 0; font-size: 10.5px; text-transform: uppercase; color: #475569; font-weight: 800;">Description & Location Advantages:</h4>
+            <p style="margin: 0; font-size: 10.5px; color: #334155; line-height: 1.4;">
+              ${escapeHtml(p.desc)}
+            </p>
+          </div>
+
+          <!-- Footer Contact Banner -->
+          <div style="background: #0f172a; color: #ffffff; border-radius: 8px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 10px;">
+            <div>
+              <strong style="color: #fbbf24; font-size: 10.5px;">Office Location:</strong>
+              <div>No. 01, Sowbhagya Nagar, Nellikuppam Main Road, Kayarambedu - 603 202.</div>
+            </div>
+            <div style="text-align: right;">
+              <strong style="color: #34d399; font-size: 10.5px;">Direct Owner Contact:</strong>
+              <div>+91 98406 15219 / +91 86677 49580</div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      window.print();
+    }
+
+    function printCurrentPlotBrochure() {
+      if (!currentlySelectedPlot) return;
+      const plot = currentlySelectedPlot;
+      const currentLayout = propertiesData.find(p => p.id === activeLayoutId) || propertiesData.find(p => p.category === 'Layout');
+      const layoutName = currentLayout ? currentLayout.title : (plot.layout || 'Tamizh Real Estate Layout');
+      const container = document.getElementById('printBrochureContainer');
+      if (!container) return;
+
+      const photoSrc = (plot.image && String(plot.image).trim() !== '') 
+        ? plot.image 
+        : (currentLayout && (currentLayout.masterplanImage || currentLayout.image) 
+          ? (currentLayout.masterplanImage || currentLayout.image) 
+          : (layoutDoc && layoutDoc.primaryImage ? layoutDoc.primaryImage : '/logo.png'));
+
+      container.innerHTML = `
+        <div style="max-width: 800px; margin: 0 auto; padding: 12px 16px; font-family: 'Segoe UI', Arial, sans-serif; color: #1e293b; line-height: 1.35; box-sizing: border-box;">
+          <!-- Header with Logo and Brand -->
+          <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #b45309; padding-bottom: 8px; margin-bottom: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <img src="/logo.png" style="width: 52px; height: 52px; object-fit: contain; border-radius: 50%; border: 2px solid #d97706;" alt="Logo">
+              <div>
+                <h1 style="margin: 0; font-size: 19px; font-weight: 800; color: #0f172a; letter-spacing: 0.5px;">TAMIZH REAL ESTATE</h1>
+                <p style="margin: 1px 0 0 0; font-size: 11px; color: #b45309; font-weight: 700;">Approved Layout Plots • Official Ground Survey Sheet</p>
+              </div>
+            </div>
+            <div style="text-align: right; font-size: 10.5px; color: #475569;">
+              <strong style="color: #0f172a; font-size: 11.5px; display: block;">Prop: K. Kulasekaran</strong>
+              <span>📞 +91 98406 15219</span> • <span>✉️ tamizhrealestate@gmail.com</span>
+            </div>
+          </div>
+
+          <!-- FULL-WIDTH PLOT PHOTO ACROSS THE ENTIRE SHEET -->
+          <div style="width: 100%; height: 260px; border-radius: 8px; overflow: hidden; border: 1.5px solid #cbd5e1; background: #000; margin-bottom: 10px;">
+            <img src="${escapeHtml(photoSrc)}" style="width: 100%; height: 100%; object-fit: cover; display: block;" alt="Plot Image">
+          </div>
+
+          <!-- LARGE GOLD PLOT BADGE BANNER -->
+          <div style="width: 100%; box-sizing: border-box; background: linear-gradient(90deg, #78350f 0%, #1e1b4b 50%, #78350f 100%); border: 2px solid #f59e0b; border-radius: 8px; padding: 10px 16px; margin-bottom: 12px; text-align: center; color: #ffffff;">
+            <div style="display: inline-block; padding: 2px 10px; background: rgba(245, 158, 11, 0.25); border: 1px solid #f59e0b; border-radius: 20px; font-size: 10px; font-weight: 800; color: #fbbf24; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
+              📐 Approved Layout Plot
+            </div>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+              <span style="font-size: 26px; font-weight: 900; color: #fbbf24; text-shadow: 0 0 10px rgba(245, 158, 11, 0.5);">${escapeHtml(plot.number)}</span>
+              <span style="font-size: 16px; font-weight: 900; color: #ffffff; letter-spacing: 0.8px; text-transform: uppercase;">in ${escapeHtml(layoutName)}</span>
+            </div>
+          </div>
+
+          <!-- Plot Details Header -->
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+            <div>
+              <span style="display: inline-block; padding: 2px 8px; background: #dcfce7; color: #15803d; font-size: 10px; font-weight: 700; border-radius: 4px; text-transform: uppercase;">
+                ${escapeHtml(plot.status || 'Available')}
+              </span>
+              <h2 style="margin: 3px 0 1px 0; font-size: 18px; font-weight: 800; color: #0f172a;">${escapeHtml(plot.number)}</h2>
+              <p style="margin: 0; font-size: 12px; color: #b45309; font-weight: 700;">📍 ${escapeHtml(layoutName)} • Approved Layout Plan</p>
+            </div>
+            <div style="text-align: right;">
+              <span style="font-size: 10px; color: #64748b; display: block; text-transform: uppercase;">Rate / Quote:</span>
+              <span style="font-size: 16px; font-weight: 800; color: #b45309;">To be Negotiable</span>
+            </div>
+          </div>
+
+          <!-- Plot Dimensions & Trust Matrix -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 10px;">
+              <h4 style="margin: 0 0 4px 0; font-size: 10.5px; text-transform: uppercase; color: #475569; font-weight: 800; border-bottom: 1px solid #e2e8f0; padding-bottom: 2px;">Plot Dimensions & Survey:</h4>
+              <div style="font-size: 10.5px; color: #1e293b; line-height: 1.5;">
+                <div>📐 Total Extent: <strong>${escapeHtml(plot.areaSqft ? plot.areaSqft + ' Sq.Ft' : (plot.dimension || 'Standard Plot'))}</strong></div>
+                <div>📏 Dimensions: <strong>${escapeHtml(plot.dimension || 'Survey Dimensions Verified')}</strong></div>
+                <div>🧭 Facing: <strong>${escapeHtml(plot.facing || 'East / North Vasthu')}</strong></div>
+                <div>🏷️ Category: <strong>${escapeHtml(plot.plotType || 'Residential Plot')}</strong></div>
+              </div>
+            </div>
+
+            <!-- Trust Badges Strip -->
+            <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 8px 10px; display: flex; flex-direction: column; justify-content: space-around;">
+              <div style="display: flex; justify-content: space-around; text-align: center; font-size: 10px;">
+                <div><strong style="color: #15803d; font-size: 11px; display: block;">✓ DTCP Approved</strong> Clear Parent Deeds</div>
+                <div><strong style="color: #15803d; font-size: 11px; display: block;">✓ 30-Yr EC Clear</strong> Immediate Patta</div>
+              </div>
+              <div style="text-align: center; font-size: 10px; color: #047857; margin-top: 4px; font-weight: 600;">
+                🏦 80% Bank Loan Arranged (SBI / HDFC / LIC HFL)
+              </div>
+            </div>
+          </div>
+
+          <!-- Amenities / Notes -->
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 10px; margin-bottom: 10px;">
+            <h4 style="margin: 0 0 3px 0; font-size: 10.5px; text-transform: uppercase; color: #475569; font-weight: 800;">Infrastructure & Highlights:</h4>
+            <p style="margin: 0; font-size: 10.5px; color: #334155; line-height: 1.4;">
+              ${escapeHtml(plot.notes || '30ft & 40ft Tar Road Connectivity • Sweet Ground Water • Immediate Patta Registration • 80% Bank Loan Arranged through SBI, HDFC & LIC HFL.')}
+            </p>
+          </div>
+
+          <!-- Footer Contact Banner -->
+          <div style="background: #0f172a; color: #ffffff; border-radius: 8px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 10px;">
+            <div>
+              <strong style="color: #fbbf24; font-size: 10.5px;">Office Location:</strong>
+              <div>No. 01, Sowbhagya Nagar, Nellikuppam Main Road, Kayarambedu - 603 202.</div>
+            </div>
+            <div style="text-align: right;">
+              <strong style="color: #34d399; font-size: 10.5px;">Direct Owner Contact:</strong>
+              <div>+91 98406 15219 / +91 86677 49580</div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      window.print();
+    }
 
     function toggleMobileNavMenu() {
       const menu = document.getElementById('mobileNavMenu');
@@ -1815,6 +2330,33 @@
       modal.classList.add('hidden');
     }
 
+    // WhatsApp Sharing Functions
+    function shareCurrentPropertyOnWhatsApp() {
+      if (!modalSelectedProp) return;
+      const p = modalSelectedProp;
+      const shareUrl = window.location.origin + window.location.pathname + '#listings';
+      const msg = `*Tamizh Real Estate Listing:*%0A*${p.title}*%0A📍 Location: ${p.location}%0A🏷️ Category: ${p.category}%0A📋 Details: ${p.specs || 'DTCP Approved / Clear Titles'}%0A💰 Price: Direct Discussion with Owner (To be Negotiable)%0A%0A👉 View Listing Online: ${shareUrl}%0A📞 Call Mr. K. Kulasekaran: +91 98406 15219`;
+      window.open(`https://api.whatsapp.com/send?text=${msg}`, '_blank');
+    }
+
+    function sharePropertyCard(id) {
+      const p = propertiesData.find(item => item.id === id);
+      if (!p) return;
+      const shareUrl = window.location.origin + window.location.pathname + '#listings';
+      const msg = `*Tamizh Real Estate Listing:*%0A*${p.title}*%0A📍 Location: ${p.location}%0A🏷️ Category: ${p.category}%0A📋 Details: ${p.specs || 'DTCP Approved / Clear Titles'}%0A%0A👉 View Details: ${shareUrl}%0A📞 Call Mr. K. Kulasekaran: +91 98406 15219`;
+      window.open(`https://api.whatsapp.com/send?text=${msg}`, '_blank');
+    }
+
+    function shareCurrentPlotOnWhatsApp() {
+      if (!currentlySelectedPlot) return;
+      const plot = currentlySelectedPlot;
+      const currentLayout = propertiesData.find(p => p.id === activeLayoutId) || propertiesData.find(p => p.category === 'Layout');
+      const layoutName = currentLayout ? currentLayout.title : (plot.layout || 'Tamizh Real Estate Layout');
+      const shareUrl = window.location.origin + window.location.pathname + '#masterplan';
+      const msg = `*Tamizh Real Estate - Approved Plot Details:*%0A*${plot.number}* at *${layoutName}*%0A📐 Area: ${plot.areaSqft ? plot.areaSqft + ' Sq.Ft' : (plot.dimension || 'Standard Plot')}%0A🧭 Facing: ${plot.facing || 'East / North Vasthu'}%0A🛡️ Status: ${plot.status}%0A%0A👉 View Live Interactive Plan: ${shareUrl}%0A📞 Call Mr. K. Kulasekaran: +91 98406 15219`;
+      window.open(`https://api.whatsapp.com/send?text=${msg}`, '_blank');
+    }
+
     function zoomPlotModalImage() {
       const modalImg = document.getElementById('plotModalImg');
       if (!modalImg || !modalImg.src) return;
@@ -2084,19 +2626,24 @@
             </div>
           </div>
 
-          <div class="p-5 sm:p-6 pt-0 flex items-center gap-2.5">
-            <button onclick="openPropertyModal(${p.id})" class="flex-1 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 font-extrabold text-xs sm:text-sm border border-amber-500/40 transition shadow-md hover:scale-[1.02]">
-              View Photos & Details
+          <div class="p-5 sm:p-6 pt-0 space-y-2">
+            <div class="flex items-center gap-2.5">
+              <button onclick="openPropertyModal(${p.id})" class="flex-1 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 font-extrabold text-xs sm:text-sm border border-amber-500/40 transition shadow-md hover:scale-[1.02]">
+                View Photos & Details
+              </button>
+              ${(p.status === 'Booked') ? `
+                <a href="https://wa.me/919840615219?text=${encodeURIComponent(`Vanakkam Mr. Kulasekaran, I noticed Ref#${p.id}: ${p.title} (${p.location || 'Guduvanchery'}) is marked as Booked. Please notify me if a similar property or rental becomes available.`)}" target="_blank" class="px-4 py-3 rounded-xl bg-amber-600/30 hover:bg-amber-600/40 text-amber-300 border border-amber-500/40 font-extrabold text-xs sm:text-sm transition shadow-md hover:scale-105" title="Enquire waiting list">
+                  Waiting List
+                </a>
+              ` : `
+                <a href="https://wa.me/919840615219?text=Vanakkam%20Mr.%20Kulasekaran,%20I%20am%20inquiring%20about%20Ref%23${p.id}:%20${encodeURIComponent(p.title)}%20located%20at%20${encodeURIComponent(p.location || 'Guduvanchery')}" target="_blank" class="px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs sm:text-sm transition shadow-md hover:scale-105">
+                  WhatsApp
+                </a>
+              `}
+            </div>
+            <button onclick="sharePropertyCard(${p.id})" class="w-full py-1.5 rounded-lg bg-slate-900/80 hover:bg-slate-800 text-emerald-400 font-semibold text-[11px] border border-slate-700 transition flex items-center justify-center gap-1.5" title="Share with family">
+              <span>📲</span> Share on WhatsApp
             </button>
-            ${(p.status === 'Booked') ? `
-              <a href="https://wa.me/919840615219?text=${encodeURIComponent(`Vanakkam Mr. Kulasekaran, I noticed Ref#${p.id}: ${p.title} (${p.location || 'Guduvanchery'}) is marked as Booked. Please notify me if a similar property or rental becomes available.`)}" target="_blank" class="px-4 py-3 rounded-xl bg-amber-600/30 hover:bg-amber-600/40 text-amber-300 border border-amber-500/40 font-extrabold text-xs sm:text-sm transition shadow-md hover:scale-105" title="Enquire waiting list">
-                Waiting List
-              </a>
-            ` : `
-              <a href="https://wa.me/919840615219?text=Vanakkam%20Mr.%20Kulasekaran,%20I%20am%20inquiring%20about%20Ref%23${p.id}:%20${encodeURIComponent(p.title)}%20located%20at%20${encodeURIComponent(p.location || 'Guduvanchery')}" target="_blank" class="px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs sm:text-sm transition shadow-md hover:scale-105">
-                WhatsApp
-              </a>
-            `}
           </div>
         `;
         container.appendChild(card);
@@ -2170,38 +2717,66 @@
       if (Array.isArray(p.amenitiesPhotos)) photoList.push(...p.amenitiesPhotos);
       if (Array.isArray(p.gallery)) photoList.push(...p.gallery);
 
-      const uniquePhotos = [...new Set(photoList.filter(u => u && typeof u === 'string' && u.trim() !== ''))];
-      if (uniquePhotos.length > 1) {
-        uniquePhotos.forEach((imgUrl, idx) => {
+      currentModalPhotos = [...new Set(photoList.filter(u => u && typeof u === 'string' && u.trim() !== ''))];
+      currentModalPhotoIdx = 0;
+
+      if (currentModalPhotos.length > 1) {
+        currentModalPhotos.forEach((imgUrl, idx) => {
           const thumb = document.createElement('img');
           thumb.src = imgUrl;
           thumb.alt = `${p.title} - Photo ${idx + 1}`;
           thumb.className = "w-20 h-16 sm:w-24 sm:h-20 rounded-xl object-cover border-2 border-slate-700 cursor-pointer hover:border-amber-400 hover:scale-105 transition shadow-md";
           thumb.onclick = () => {
+            currentModalPhotoIdx = idx;
             document.getElementById('modalImg').src = imgUrl;
           };
           thumbContainer.appendChild(thumb);
         });
       }
 
-      // Specifications Box (Shows prominent details, large plot count badge & specs)
+      // Centered, Prominently Enlarged, Interactive Clickable Subdivided Plots Banner placed directly under images across full width
+      const topPlotsBanner = document.getElementById('modalTopPlotsBanner');
+      if (topPlotsBanner) {
+        if (p.managePlots !== false && p.plotCount) {
+          topPlotsBanner.innerHTML = `
+            <div onclick="navigateToLayoutPlots(${p.id})" class="w-full p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-amber-500/30 via-slate-900 to-amber-500/30 border-2 border-amber-400 shadow-[0_12px_35px_rgba(245,158,11,0.35)] text-center cursor-pointer hover:scale-[1.01] hover:border-amber-300 transition-all duration-300 group">
+              <div class="inline-flex items-center justify-center gap-2 mb-2 px-4 py-1.5 rounded-full bg-amber-400/25 text-amber-300 text-xs sm:text-sm font-black uppercase tracking-wider border border-amber-400/40">
+                <span>📐</span> Approved Layout Plots
+              </div>
+              <div class="flex items-center justify-center gap-3 sm:gap-4 my-2">
+                <span class="text-4xl sm:text-5xl md:text-6xl font-black text-amber-300 font-lux tracking-wider group-hover:scale-105 transition drop-shadow-[0_2px_15px_rgba(245,158,11,0.55)]">${escapeHtml(p.plotCount)}</span>
+                <span class="text-xl sm:text-2xl md:text-3xl font-black text-amber-400 font-lux uppercase tracking-wider">Available Plots in this Nagar</span>
+              </div>
+              <p class="text-xs sm:text-sm text-amber-200 font-bold mt-1">
+                👉 Click here to inspect these ${escapeHtml(p.plotCount)} plots on the Live Interactive Layout Plan ↗
+              </p>
+            </div>
+          `;
+          topPlotsBanner.classList.remove('hidden');
+        } else {
+          topPlotsBanner.innerHTML = '';
+          topPlotsBanner.classList.add('hidden');
+        }
+      }
+
+      // Specifications Box (Shows prominent details, compact layout plot banner & specs)
       const specsBox = document.getElementById('modalSpecsBox');
       if (specsBox) {
         let specsHtml = `<div class="font-extrabold text-amber-300 text-sm sm:text-base border-b border-slate-700/80 pb-2 mb-3">Property Information & Specifications:</div>`;
         const detailsList = [];
 
-        // Centered, Prominently Enlarged, Interactive Clickable Subdivided Plots Banner
+        // Compact, Elegant Available Layout Plots Banner inside Right Column
         if (p.managePlots !== false && p.plotCount) {
           specsHtml += `
-            <div onclick="navigateToLayoutPlots(${p.id})" class="mb-4 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-amber-500/25 via-slate-900 to-amber-500/25 border-2 border-amber-400 shadow-[0_10px_30px_rgba(245,158,11,0.25)] text-center cursor-pointer hover:scale-[1.02] hover:border-amber-300 transition-all duration-300 group">
-              <div class="inline-flex items-center justify-center gap-2 mb-1.5 px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 text-xs font-black uppercase tracking-wider">
-                <span>📐</span> Available Layout Plots
+            <div onclick="navigateToLayoutPlots(${p.id})" class="mb-4 p-4 rounded-2xl bg-gradient-to-r from-amber-500/20 via-slate-900 to-amber-500/20 border-2 border-amber-400/60 shadow-lg text-center cursor-pointer hover:scale-[1.02] hover:border-amber-300 transition-all duration-300 group">
+              <div class="inline-flex items-center justify-center gap-1.5 mb-1 px-3 py-0.5 rounded-full bg-amber-400/20 text-amber-300 text-[11px] font-black uppercase tracking-wider border border-amber-400/30">
+                <span>📐</span> Approved Layout Plots
               </div>
               <div class="flex items-center justify-center gap-2 my-1">
-                <span class="text-3xl sm:text-4xl md:text-5xl font-black text-amber-300 font-lux tracking-wider group-hover:scale-105 transition">${escapeHtml(p.plotCount)}</span>
-                <span class="text-base sm:text-lg font-black text-white uppercase tracking-wider">Plots in this Nagar</span>
+                <span class="text-3xl sm:text-4xl font-black text-amber-300 font-lux tracking-wider group-hover:scale-105 transition">${escapeHtml(p.plotCount)}</span>
+                <span class="text-sm sm:text-base font-black text-white uppercase tracking-wider">Plots in this Nagar</span>
               </div>
-              <p class="text-xs text-amber-200/90 font-medium mt-1">
+              <p class="text-[11px] text-amber-200/90 font-medium mt-0.5">
                 👉 Click here to inspect these ${escapeHtml(p.plotCount)} plots on the Live Interactive Layout Plan ↗
               </p>
             </div>
@@ -2345,8 +2920,149 @@
       window.open(`https://wa.me/919840615219?text=${message}`, '_blank');
     }
 
+    // ----------------------------------------------------
+    // New Viewer Enhancements: Lightbox Zoom, Gallery Arrows, Registration Calc, Site Visit Booking & Copy Address
+    // ----------------------------------------------------
+    let currentModalPhotos = [];
+    let currentModalPhotoIdx = 0;
+    let currentPlotModalPhotos = [];
+    let currentPlotModalPhotoIdx = 0;
+
+    function prevModalPhoto(e) {
+      if (e) e.stopPropagation();
+      if (!currentModalPhotos || currentModalPhotos.length <= 1) return;
+      currentModalPhotoIdx = (currentModalPhotoIdx - 1 + currentModalPhotos.length) % currentModalPhotos.length;
+      document.getElementById('modalImg').src = currentModalPhotos[currentModalPhotoIdx];
+    }
+
+    function nextModalPhoto(e) {
+      if (e) e.stopPropagation();
+      if (!currentModalPhotos || currentModalPhotos.length <= 1) return;
+      currentModalPhotoIdx = (currentModalPhotoIdx + 1) % currentModalPhotos.length;
+      document.getElementById('modalImg').src = currentModalPhotos[currentModalPhotoIdx];
+    }
+
+    function prevPlotModalPhoto(e) {
+      if (e) e.stopPropagation();
+      if (!currentPlotModalPhotos || currentPlotModalPhotos.length <= 1) return;
+      currentPlotModalPhotoIdx = (currentPlotModalPhotoIdx - 1 + currentPlotModalPhotos.length) % currentPlotModalPhotos.length;
+      document.getElementById('plotModalImg').src = currentPlotModalPhotos[currentPlotModalPhotoIdx];
+    }
+
+    function nextPlotModalPhoto(e) {
+      if (e) e.stopPropagation();
+      if (!currentPlotModalPhotos || currentPlotModalPhotos.length <= 1) return;
+      currentPlotModalPhotoIdx = (currentPlotModalPhotoIdx + 1) % currentPlotModalPhotos.length;
+      document.getElementById('plotModalImg').src = currentPlotModalPhotos[currentPlotModalPhotoIdx];
+    }
+
+    // Keyboard Arrow navigation for photo modals
+    window.addEventListener('keydown', (e) => {
+      const propModal = document.getElementById('propertyModal');
+      const plotModal = document.getElementById('plotModal');
+      if (propModal && !propModal.classList.contains('hidden')) {
+        if (e.key === 'ArrowLeft') prevModalPhoto();
+        if (e.key === 'ArrowRight') nextModalPhoto();
+        if (e.key === 'Escape') closePropertyModal();
+      } else if (plotModal && !plotModal.classList.contains('hidden')) {
+        if (e.key === 'ArrowLeft') prevPlotModalPhoto();
+        if (e.key === 'ArrowRight') nextPlotModalPhoto();
+        if (e.key === 'Escape') closePlotDetailsModal();
+      }
+    });
+
+    function zoomModalPropertyImage() {
+      const img = document.getElementById('modalImg');
+      if (!img || !img.src) return;
+      document.getElementById('layoutZoomImg').src = img.src;
+      toggleLayoutBlueprintZoom();
+    }
+
+    function copyOfficeAddress(e) {
+      if (e) e.stopPropagation();
+      const addr = "No. 01, Sowbhagya Nagar, Nellikuppam Main Road, Kayarambedu - 603 202, Chengalpattu District, Tamil Nadu.";
+      navigator.clipboard.writeText(addr).then(() => {
+        const textEl = document.getElementById('copyAddrText');
+        const iconEl = document.getElementById('copyAddrIcon');
+        if (textEl) textEl.innerText = "✓ Copied!";
+        if (iconEl) iconEl.innerText = "✅";
+        setTimeout(() => {
+          if (textEl) textEl.innerText = "Copy Address";
+          if (iconEl) iconEl.innerText = "📋";
+        }, 2500);
+      });
+    }
+
+    function setQuickKeyword(tag) {
+      const input = document.getElementById('propSearchKeyword');
+      if (input) {
+        input.value = tag;
+        applyFilters();
+        const listingsSec = document.getElementById('listings');
+        if (listingsSec) listingsSec.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function downloadActiveBlueprint() {
+      const currentLayout = propertiesData.find(p => p.id === activeLayoutId) || propertiesData.find(p => p.category === 'Layout');
+      const bpImg = currentLayout?.masterplanImage || currentLayout?.image || layoutDoc?.primaryImage;
+      if (bpImg) {
+        const a = document.createElement('a');
+        a.href = bpImg;
+        a.download = `${(currentLayout?.title || 'Tamizh_Real_Estate_Layout')}_Blueprint.jpg`;
+        a.target = '_blank';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+    }
+
+    function calculateRegistrationCost() {
+      const sqft = parseFloat(document.getElementById('regCalcSqft').value) || 0;
+      const rate = parseFloat(document.getElementById('regCalcRate').value) || 0;
+      const landValue = sqft * rate;
+      // Tamil Nadu: Stamp Duty (7%) + Registration Fee (4%) = approx 11%
+      const stampDuty = Math.round(landValue * 0.07);
+      const regFee = Math.round(landValue * 0.04);
+      const totalGovt = stampDuty + regFee;
+      
+      const formatIn = (val) => '₹' + val.toLocaleString('en-IN');
+      document.getElementById('regCalcTotal').innerText = `${formatIn(landValue)} + ${formatIn(totalGovt)} (Govt Duty)`;
+    }
+
+    function openSiteVisitModal() {
+      const modal = document.getElementById('siteVisitModal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+    }
+
+    function closeSiteVisitModal() {
+      const modal = document.getElementById('siteVisitModal');
+      if (modal) {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+      }
+    }
+
+    function submitSiteVisitBooking(e) {
+      e.preventDefault();
+      const name = document.getElementById('visitName').value;
+      const phone = document.getElementById('visitPhone').value;
+      const day = document.getElementById('visitDay').value;
+      const time = document.getElementById('visitTime').value;
+      const propTitle = modalSelectedProp ? modalSelectedProp.title : (currentlySelectedPlot ? currentlySelectedPlot.number : 'Approved Layout Property');
+      const propLoc = modalSelectedProp ? modalSelectedProp.location : 'Kayarambedu / Guduvanchery';
+
+      const msg = `Vanakkam Mr. Kulasekaran, I would like to book a Free On-Site Property Visit:%0A- Property: ${propTitle} (${propLoc})%0A- Name: ${name}%0A- Phone: ${phone}%0A- Preferred Day: ${day}%0A- Preferred Time Slot: ${time}%0APlease confirm our site inspection schedule.`;
+      closeSiteVisitModal();
+      window.open(`https://wa.me/919840615219?text=${msg}`, '_blank');
+    }
+
     loadPublicData();
     calculateEMI();
+    calculateRegistrationCost();
   </script>
 </body>
 </html>
