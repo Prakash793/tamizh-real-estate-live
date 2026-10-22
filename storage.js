@@ -240,7 +240,8 @@ async function initDB() {
       'ALTER TABLE trs_plots ADD COLUMN IF NOT EXISTS area_sqft INT DEFAULT 0',
       'ALTER TABLE trs_plots ADD COLUMN IF NOT EXISTS plot_type VARCHAR(100) DEFAULT \'Residential\'',
       'ALTER TABLE trs_plots ADD COLUMN IF NOT EXISTS notes TEXT DEFAULT \'\'',
-      'ALTER TABLE trs_plots ADD COLUMN IF NOT EXISTS image TEXT DEFAULT \'\''
+      'ALTER TABLE trs_plots ADD COLUMN IF NOT EXISTS image TEXT DEFAULT \'\'',
+      'ALTER TABLE trs_plots ADD COLUMN IF NOT EXISTS gallery JSONB DEFAULT \'[]\'::jsonb'
     ];
     for (const aq of alterQueries) {
       try { await client.query(aq); } catch (e) {}
@@ -659,12 +660,13 @@ async function deleteProperty(id) {
 // ----------------- PLOTS API -----------------
 async function getPlots() {
   if (isPostgres) {
-    const res = await pgPool.query('SELECT id, layout_id AS "layoutId", number, layout, dimension, facing, price, status, COALESCE(area_sqft, 0) AS "areaSqft", COALESCE(plot_type, \'Residential\') AS "plotType", COALESCE(notes, \'\') AS "notes", COALESCE(image, \'\') AS "image" FROM trs_plots ORDER BY id ASC');
+    const res = await pgPool.query('SELECT id, layout_id AS "layoutId", number, layout, dimension, facing, price, status, COALESCE(area_sqft, 0) AS "areaSqft", COALESCE(plot_type, \'Residential\') AS "plotType", COALESCE(notes, \'\') AS "notes", COALESCE(image, \'\') AS "image", COALESCE(gallery, \'[]\'::jsonb) AS "gallery" FROM trs_plots ORDER BY id ASC');
     return res.rows.map(r => ({
       ...r,
       layoutId: parseInt(r.layoutId, 10) || 1,
       areaSqft: parseInt(r.areaSqft, 10) || 0,
       image: r.image || '',
+      gallery: Array.isArray(r.gallery) ? r.gallery : (r.gallery ? (typeof r.gallery === 'string' ? JSON.parse(r.gallery) : []) : []),
       status: (r.status === 'Active' ? 'Available' : (r.status || 'Available'))
     }));
   }
@@ -678,6 +680,7 @@ async function getPlots() {
       plotType: r.plotType || 'Residential',
       notes: r.notes || '',
       image: r.image || '',
+      gallery: Array.isArray(r.gallery) ? r.gallery : (r.gallery ? (typeof r.gallery === 'string' ? JSON.parse(r.gallery) : []) : []),
       status: (r.status === 'Active' ? 'Available' : (r.status || 'Available'))
     }));
   } catch (e) { return []; }
@@ -695,13 +698,14 @@ async function addPlot(plot) {
   const plotTypeVal = plot.plotType ? String(plot.plotType).trim() : 'Residential';
   const notesVal = plot.notes ? String(plot.notes).trim() : '';
   const imageVal = plot.image ? String(plot.image).trim() : '';
+  const galleryVal = Array.isArray(plot.gallery) ? plot.gallery : [];
   const rawStatus = plot.status || 'Available';
   const statusVal = rawStatus === 'Active' ? 'Available' : rawStatus;
 
   if (isPostgres) {
     const res = await pgPool.query(
-      'INSERT INTO trs_plots (layout_id, number, layout, dimension, facing, price, status, area_sqft, plot_type, notes, image) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id, layout_id AS "layoutId", number, layout, dimension, facing, price, status, area_sqft AS "areaSqft", plot_type AS "plotType", notes, image',
-      [targetLayoutId, plot.number, plot.layout || 'Sowbhagya Nagar Layout', plot.dimension, plot.facing, plot.price || 'To be Negotiable', statusVal, areaSqftVal, plotTypeVal, notesVal, imageVal]
+      'INSERT INTO trs_plots (layout_id, number, layout, dimension, facing, price, status, area_sqft, plot_type, notes, image, gallery) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING id, layout_id AS "layoutId", number, layout, dimension, facing, price, status, area_sqft AS "areaSqft", plot_type AS "plotType", notes, image, gallery',
+      [targetLayoutId, plot.number, plot.layout || 'Sowbhagya Nagar Layout', plot.dimension, plot.facing, plot.price || 'To be Negotiable', statusVal, areaSqftVal, plotTypeVal, notesVal, imageVal, JSON.stringify(galleryVal)]
     );
     return res.rows[0];
   }
@@ -719,7 +723,8 @@ async function addPlot(plot) {
     areaSqft: areaSqftVal,
     plotType: plotTypeVal,
     notes: notesVal,
-    image: imageVal
+    image: imageVal,
+    gallery: galleryVal
   };
   plots.push(newPlot);
   fs.writeFileSync(PLOTS_FILE, JSON.stringify(plots, null, 2), 'utf8');
@@ -737,12 +742,16 @@ async function updatePlot(id, updates) {
       if (key === 'layoutId') colName = 'layout_id';
       else if (key === 'areaSqft') colName = 'area_sqft';
       else if (key === 'plotType') colName = 'plot_type';
+      const finalVal = (key === 'gallery') ? JSON.stringify(Array.isArray(val) ? val : []) : val;
       fields.push(`${colName} = $${idx++}`);
-      values.push(val);
+      values.push(finalVal);
     }
     values.push(id);
-    const res = await pgPool.query(`UPDATE trs_plots SET ${fields.join(', ')}, updated_at = CURRENT_TIMESTAMP WHERE id = $${idx} RETURNING id, layout_id AS "layoutId", number, layout, dimension, facing, price, status, area_sqft AS "areaSqft", plot_type AS "plotType", notes, image`, values);
-    return res.rows[0] || null;
+    const res = await pgPool.query(`UPDATE trs_plots SET ${fields.join(', ')}, updated_at = CURRENT_TIMESTAMP WHERE id = $${idx} RETURNING id, layout_id AS "layoutId", number, layout, dimension, facing, price, status, area_sqft AS "areaSqft", plot_type AS "plotType", notes, image, gallery`, values);
+    return res.rows[0] ? {
+      ...res.rows[0],
+      gallery: typeof res.rows[0].gallery === 'string' ? JSON.parse(res.rows[0].gallery) : (res.rows[0].gallery || [])
+    } : null;
   }
   const plots = await getPlots();
   const index = plots.findIndex(p => p.id === id);

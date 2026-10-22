@@ -215,6 +215,7 @@ async function startServer(customPort = null) {
         areaSqft: pl.areaSqft || 0,
         plotType: pl.plotType || 'Residential',
         image: pl.image || '',
+        gallery: Array.isArray(pl.gallery) ? pl.gallery : [],
         price: 'To be Negotiable'
       }));
       const layoutDoc = await storage.getLayoutDocument();
@@ -408,7 +409,8 @@ async function startServer(customPort = null) {
           price: priceVal,
           status: statusVal,
           notes: notesVal,
-          image: data.image ? String(data.image).trim() : ''
+          image: data.image ? String(data.image).trim() : '',
+          gallery: Array.isArray(data.gallery) ? data.gallery : []
         });
         return sendJSON(res, 201, { success: true, plot: newPlot });
       }
@@ -445,6 +447,7 @@ async function startServer(customPort = null) {
         if (data.notes !== undefined) updatePayload.notes = String(data.notes).trim();
         if (data.layoutId !== undefined) updatePayload.layoutId = parseInt(data.layoutId, 10);
         if (data.image !== undefined) updatePayload.image = String(data.image).trim();
+        if (data.gallery !== undefined) updatePayload.gallery = Array.isArray(data.gallery) ? data.gallery : [];
 
         const updated = await storage.updatePlot(id, updatePayload);
         if (!updated) return sendJSON(res, 404, { error: 'Plot not found' });
