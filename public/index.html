@@ -1047,11 +1047,10 @@
         card.innerHTML = `
           <div class="flex-1 flex flex-col cursor-pointer" onclick="openServiceDetailsModal('${panel.id}')" title="Click to view full service details and large photo">
             <!-- Large Image Box (Clicking opens full service view) -->
-            <div class="h-48 sm:h-56 rounded-2xl overflow-hidden relative bg-slate-950 shadow-inner group transition duration-300">
+            <div class="h-60 sm:h-72 md:h-80 rounded-2xl overflow-hidden relative bg-slate-950 shadow-inner group transition duration-300">
               <img src="${escapeHtml(panel.image || fallbackImg)}" alt="${escapeHtml(panel.title)}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='${fallbackImg}'">
-              <span class="absolute top-3 left-3 px-3 py-1 rounded-lg ${badgeColors[colorIdx]} text-white text-xs font-bold shadow-md">${escapeHtml(panel.title)}</span>
-              <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition duration-300"></div>
-              <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition duration-300 bg-black/70 backdrop-blur-sm text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded border border-amber-400/30">
+              <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition duration-300"></div>
+              <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition duration-300 bg-black/70 backdrop-blur-sm text-amber-300 text-[11px] font-bold px-2.5 py-1 rounded-lg border border-amber-400/30">
                 🔍 View Details
               </div>
             </div>
