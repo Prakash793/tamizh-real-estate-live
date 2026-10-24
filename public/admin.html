@@ -21,6 +21,115 @@
       backdrop-filter: blur(20px);
       border: 1px solid rgba(223, 172, 67, 0.25);
     }
+
+    /* ---------------- HIGH-LEGIBILITY & ENLARGED UI OVERRIDES (NO ZOOM NEEDED) ---------------- */
+    /* Scale inputs, selects, textareas for effortless readability and comfortable tapping */
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    input[type="url"],
+    input[type="password"],
+    input[type="search"],
+    select,
+    textarea {
+      font-size: 1.05rem !important; /* ~16.8px */
+      line-height: 1.5 !important;
+      padding: 0.75rem 1rem !important;
+      min-height: 48px !important;
+      color: #ffffff !important;
+      background-color: #050b18 !important;
+      border: 1.5px solid #334155 !important;
+      border-radius: 0.85rem !important;
+      transition: all 0.2s ease-in-out !important;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #f59e0b !important;
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25) !important;
+      outline: none !important;
+    }
+
+    /* Scale all field labels */
+    label,
+    .form-label {
+      font-size: 0.95rem !important; /* ~15.2px */
+      font-weight: 700 !important;
+      letter-spacing: 0.025em !important;
+      color: #e2e8f0 !important;
+      margin-bottom: 0.4rem !important;
+      display: inline-block !important;
+    }
+
+    /* Boost small helper text across the entire admin dashboard */
+    .text-xs {
+      font-size: 0.925rem !important; /* ~14.8px */
+      line-height: 1.45rem !important;
+    }
+    .text-\[10px\],
+    .text-\[9px\],
+    .text-\[11px\],
+    .text-\[11\.5px\],
+    .text-\[12px\] {
+      font-size: 0.875rem !important; /* 14px */
+      line-height: 1.35rem !important;
+    }
+    .text-sm {
+      font-size: 1.025rem !important; /* ~16.4px */
+      line-height: 1.55rem !important;
+    }
+    .text-base {
+      font-size: 1.15rem !important; /* ~18.4px */
+      line-height: 1.65rem !important;
+    }
+
+    /* Action buttons: prominent, tactile, easy to tap without squinting */
+    button,
+    .btn-action {
+      min-height: 44px !important;
+      font-size: 0.975rem !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.02em !important;
+      transition: all 0.15s ease-in-out !important;
+    }
+
+    /* File input buttons */
+    input[type="file"]::file-selector-button {
+      font-size: 0.925rem !important;
+      font-weight: 700 !important;
+      padding: 0.6rem 1.1rem !important;
+      border-radius: 0.75rem !important;
+      margin-right: 0.85rem !important;
+      cursor: pointer !important;
+    }
+
+    /* Counter cards and badges */
+    #adminPlotCountersRow span[id^="cnt"] {
+      font-size: 2.25rem !important;
+      font-weight: 900 !important;
+      line-height: 1.2 !important;
+    }
+
+    /* Modal dialog sizes */
+    #propertyEditorModal > div,
+    #credentialsModal > div {
+      max-width: 90rem !important; /* wider view for easy multi-column scanning */
+    }
+
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #020617;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 5px;
+      border: 2px solid #020617;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #dfac43;
+    }
   </style>
 </head>
 <body class="bg-[#030712] text-slate-100 min-h-screen antialiased flex flex-col justify-between">
