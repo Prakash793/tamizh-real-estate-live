@@ -802,28 +802,6 @@
           Nationalized banks only grant loan sanctions on clear parent deeds with 30-year encumbrance certificates (EC), ensuring 100% legal security for your family.
         </p>
       </div>
-
-      <!-- Quick Plot Registration & Stamp Duty Estimator -->
-      <div class="mt-8 p-6 rounded-3xl glass-navy border border-amber-500/20 max-w-5xl mx-auto space-y-4 shadow-xl">
-        <div class="flex items-center gap-2">
-          <span class="text-lg">🧮</span>
-          <h3 class="text-sm sm:text-base font-extrabold text-white">Tamil Nadu Plot Registration & Stamp Duty Estimator (Approx. 7% + 4%)</h3>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-          <div>
-            <label class="block text-slate-400 font-medium mb-1">Plot Extent (Sq.Ft):</label>
-            <input type="number" id="regCalcSqft" value="1200" oninput="calculateRegistrationCost()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-bold focus:border-amber-400">
-          </div>
-          <div>
-            <label class="block text-slate-400 font-medium mb-1">Rate per Sq.Ft (₹):</label>
-            <input type="number" id="regCalcRate" value="1500" oninput="calculateRegistrationCost()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-bold focus:border-amber-400">
-          </div>
-          <div class="p-3 bg-slate-900/90 rounded-xl border border-slate-700 flex flex-col justify-center">
-            <span class="text-slate-400 text-[11px] block">Est. Land Cost + Regn/Stamp:</span>
-            <span id="regCalcTotal" class="text-amber-300 font-black text-sm sm:text-base">₹18,00,000 + ₹1,98,000</span>
-          </div>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -3315,52 +3293,8 @@
       }
     }
 
-    function calculateRegistrationCost() {
-      const sqft = parseFloat(document.getElementById('regCalcSqft').value) || 0;
-      const rate = parseFloat(document.getElementById('regCalcRate').value) || 0;
-      const landValue = sqft * rate;
-      // Tamil Nadu: Stamp Duty (7%) + Registration Fee (4%) = approx 11%
-      const stampDuty = Math.round(landValue * 0.07);
-      const regFee = Math.round(landValue * 0.04);
-      const totalGovt = stampDuty + regFee;
-      
-      const formatIn = (val) => '₹' + val.toLocaleString('en-IN');
-      document.getElementById('regCalcTotal').innerText = `${formatIn(landValue)} + ${formatIn(totalGovt)} (Govt Duty)`;
-    }
-
-    function openSiteVisitModal() {
-      const modal = document.getElementById('siteVisitModal');
-      if (modal) {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-      }
-    }
-
-    function closeSiteVisitModal() {
-      const modal = document.getElementById('siteVisitModal');
-      if (modal) {
-        modal.classList.remove('flex');
-        modal.classList.add('hidden');
-      }
-    }
-
-    function submitSiteVisitBooking(e) {
-      e.preventDefault();
-      const name = document.getElementById('visitName').value;
-      const phone = document.getElementById('visitPhone').value;
-      const day = document.getElementById('visitDay').value;
-      const time = document.getElementById('visitTime').value;
-      const propTitle = modalSelectedProp ? modalSelectedProp.title : (currentlySelectedPlot ? currentlySelectedPlot.number : 'Approved Layout Property');
-      const propLoc = modalSelectedProp ? modalSelectedProp.location : 'Kayarambedu / Guduvanchery';
-
-      const msg = `Vanakkam Mr. Kulasekaran, I would like to book a Free On-Site Property Visit:%0A- Property: ${propTitle} (${propLoc})%0A- Name: ${name}%0A- Phone: ${phone}%0A- Preferred Day: ${day}%0A- Preferred Time Slot: ${time}%0APlease confirm our site inspection schedule.`;
-      closeSiteVisitModal();
-      window.open(`https://wa.me/919840615219?text=${msg}`, '_blank');
-    }
-
     loadPublicData();
     calculateEMI();
-    calculateRegistrationCost();
   </script>
 </body>
 </html>
