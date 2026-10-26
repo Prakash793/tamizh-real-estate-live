@@ -328,8 +328,14 @@
               <input type="text" id="plotNumInput" placeholder="e.g. Plot #22" class="w-full text-sm px-4 py-2.5 sm:py-3 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-amber-400">
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1.5">Area (Sq.Ft)</label>
-              <input type="number" id="plotAreaInput" placeholder="e.g. 1500" class="w-full text-sm px-4 py-2.5 sm:py-3 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-amber-400">
+              <label id="plotAreaLabel" class="block text-xs font-bold text-slate-300 mb-1.5">Area (Sq.Ft)</label>
+              <div class="space-y-1.5">
+                <input type="number" step="any" id="plotAreaInput" oninput="handlePlotAreaCalc()" placeholder="e.g. 1500" class="w-full text-sm px-4 py-2.5 sm:py-3 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-amber-400">
+                <div id="plotSqmCalcWrapper" class="hidden flex items-center justify-between px-2.5 py-1 rounded-lg bg-emerald-950/40 border border-emerald-500/30 text-[11px]">
+                  <span class="text-emerald-400 font-semibold">Auto Sq.M:</span>
+                  <span id="plotSqmCalcText" class="text-white font-mono font-bold">0 Sq.M</span>
+                </div>
+              </div>
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-300 mb-1.5">Optional Dimensions</label>
@@ -341,8 +347,8 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            <div id="plotTypeWrapper">
               <label class="block text-xs font-bold text-slate-300 mb-1.5">Plot Type</label>
               <select id="plotTypeInput" class="w-full text-sm px-4 py-2.5 sm:py-3 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-amber-400">
                 <option value="Residential">Residential Plot</option>
@@ -360,8 +366,18 @@
               </select>
             </div>
             <div>
-              <label class="block text-[11px] text-slate-400 mb-1">Internal Admin Notes (Private)</label>
-              <input type="text" id="plotNotesInput" placeholder="e.g. Client enquiry hold until Friday" class="w-full text-xs px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white">
+              <label class="block text-xs font-bold text-amber-300 mb-1.5">Plot Price Display Option</label>
+              <div class="space-y-2">
+                <select id="plotPriceMode" onchange="handlePlotPriceModeChange()" class="w-full text-sm px-4 py-2 sm:py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white font-bold focus:outline-none focus:border-amber-400">
+                  <option value="negotiable">To be Negotiable</option>
+                  <option value="custom">Custom Price / Value</option>
+                </select>
+                <input type="text" id="plotPriceInput" placeholder="e.g. ₹1,800/sqft or ₹24 Lakhs" class="hidden w-full text-sm px-4 py-2 sm:py-2.5 rounded-xl bg-slate-950 border border-amber-500/60 text-amber-300 font-bold placeholder-slate-600 focus:outline-none focus:border-amber-400">
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1.5">Internal Notes (Private)</label>
+              <input type="text" id="plotNotesInput" placeholder="e.g. Hold until Friday" class="w-full text-sm px-3.5 py-2.5 sm:py-3 rounded-xl bg-slate-950 border border-slate-700 text-white">
             </div>
           </div>
 
@@ -388,7 +404,7 @@
           <div id="plotFormAlert" class="hidden text-xs p-3 rounded-xl text-center font-bold"></div>
 
           <div class="flex items-center justify-between pt-1">
-            <span class="text-[11px] text-slate-400">Public price fixed strictly to: <strong class="text-amber-400">To be Negotiable</strong></span>
+            <span class="text-xs text-slate-400">Default rate: <strong class="text-amber-400">To be Negotiable</strong> (or enter custom price above)</span>
             <button onclick="savePlotFormAction()" id="savePlotBtn" class="px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition shadow-md">
               Save Plot to Layout
             </button>
@@ -955,7 +971,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label class="block text-xs font-bold text-blue-300 mb-1.5">Building Type</label>
-                <select id="editPropBuildingType" class="w-full text-sm px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white font-bold focus:outline-none focus:border-amber-400">
+                <select id="editPropBuildingType" onchange="handleBuildingTypeChange()" class="w-full text-sm px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white font-bold focus:outline-none focus:border-amber-400">
                   <option value="Independent House">Independent House</option>
                   <option value="Villa">Villa</option>
                   <option value="Apartment / Flat">Apartment / Flat</option>
@@ -983,6 +999,30 @@
                   <option value="Without Car Parking">Without Car Parking</option>
                   <option value="Not Applicable">Not Applicable</option>
                 </select>
+              </div>
+            </div>
+
+            <!-- Dedicated UDS Field for Apartment / Flat -->
+            <div id="editPropUdsWrapper" class="hidden p-3.5 rounded-xl bg-slate-900 border border-amber-500/40">
+              <label class="block text-xs font-bold text-amber-300 mb-1.5">UDS (Undivided Share of Land) *</label>
+              <div class="flex gap-2">
+                <input type="number" step="any" id="editPropUds" placeholder="e.g. 450" class="flex-1 text-sm px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-amber-400">
+                <span class="w-28 flex items-center justify-center text-sm px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-amber-300 font-bold">sq.ft</span>
+              </div>
+              <span class="text-[11px] text-slate-400 mt-1 block">Specified undivided land share in Sq.Ft for apartment ownership.</span>
+            </div>
+
+            <!-- Dedicated Rental Pricing Fields (Rent/Month & Advance Amount) -->
+            <div id="editPropRentalPriceWrapper" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-teal-950/30 border border-teal-500/40">
+              <div>
+                <label class="block text-xs font-bold text-teal-300 mb-1.5">Rent Price / Month *</label>
+                <input type="text" id="editPropRentPrice" placeholder="e.g. ₹15,000 / month or ₹20,000" class="w-full text-sm px-4 py-2.5 rounded-xl bg-slate-950 border border-teal-500/50 text-white font-bold focus:outline-none focus:border-teal-400">
+                <span class="text-[11px] text-slate-400 mt-1 block">Monthly rent displayed on property card & modal.</span>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-teal-300 mb-1.5">Advance Amount (Security Deposit)</label>
+                <input type="text" id="editPropAdvanceAmount" placeholder="e.g. ₹1,00,000 (10 Months)" class="w-full text-sm px-4 py-2.5 rounded-xl bg-slate-950 border border-teal-500/50 text-white font-bold focus:outline-none focus:border-teal-400">
+                <span class="text-[11px] text-slate-400 mt-1 block">Security deposit / advance required for tenant.</span>
               </div>
             </div>
           </div>
@@ -1013,7 +1053,7 @@
                 </select>
               </div>
             </div>
-            <div>
+            <div id="editPropFarmBuiltUpAreaWrapper">
               <label class="block text-xs font-bold text-emerald-300 mb-1.5">Built-up Area (Optional)</label>
               <div class="flex gap-2">
                 <input type="number" step="any" id="editPropBuiltUpArea" placeholder="e.g. 1800" class="flex-1 text-sm px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-amber-400">
@@ -1061,6 +1101,33 @@
                 <div class="flex-1 space-y-1.5">
                   <input type="file" id="editPropMasterplanFile" accept="image/jpeg,image/png,image/webp" onchange="previewMasterplanFile(this)" class="text-sm text-slate-300 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-800 file:text-amber-300 hover:file:bg-slate-700 cursor-pointer">
                   <p class="text-xs text-slate-400">Architectural layout blueprint for visualizer.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Layout Video Upload / Walkthrough (Dedicated for Layout Promotion) -->
+            <div id="editPropVideoContainer" class="space-y-2.5">
+              <div class="flex items-center justify-between">
+                <label class="block text-xs font-bold text-amber-300 uppercase tracking-wide flex items-center gap-1.5">
+                  <span>🎥</span> Promotional Drone / Site Walkthrough Video (Optional)
+                </label>
+                <button type="button" id="editPropRemoveVideoBtn" onclick="removePropVideo()" class="hidden text-[11px] text-rose-400 hover:text-rose-300 font-bold">Remove Video</button>
+              </div>
+              <div class="space-y-2 p-3.5 rounded-xl bg-slate-950/70 border border-amber-500/30">
+                <div id="editPropVideoPreviewWrapper" class="hidden">
+                  <video id="editPropVideoPreview" controls class="w-full max-h-48 rounded-xl border border-slate-700 bg-black mb-2"></video>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-3">
+                  <div class="flex-1 space-y-1">
+                    <label class="block text-[11px] text-slate-400 font-bold">Upload MP4 Video File</label>
+                    <input type="file" id="editPropVideoFile" accept="video/mp4,video/webm,video/quicktime" onchange="previewVideoFile(this)" class="text-xs text-slate-300 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-amber-500/20 file:text-amber-300 hover:file:bg-amber-500/30 file:border file:border-amber-500/40 cursor-pointer">
+                    <p class="text-[10px] text-slate-400">Supports MP4, WebM, MOV drone or ground videos (max 80MB).</p>
+                  </div>
+                  <div class="flex-1 space-y-1">
+                    <label class="block text-[11px] text-slate-400 font-bold">Or YouTube / Instagram Reel Video Link</label>
+                    <input type="text" id="editPropVideoUrlInput" oninput="handleVideoUrlInput(this.value)" placeholder="e.g. https://www.youtube.com/watch?v=... or https://www.instagram.com/reel/..." class="w-full text-xs px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-400">
+                    <p class="text-[10px] text-slate-400">Supports YouTube links, Shorts, Instagram Reels, and direct video links.</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1782,18 +1849,27 @@
         document.getElementById('editPropBuildingType').value = "Independent House";
         document.getElementById('editPropConfiguration').value = "2 BHK";
         document.getElementById('editPropCarParking').value = "With Car Parking";
+        const udsInput = document.getElementById('editPropUds');
+        if (udsInput) udsInput.value = "";
+        const rentInput = document.getElementById('editPropRentPrice');
+        if (rentInput) rentInput.value = "";
+        const advInput = document.getElementById('editPropAdvanceAmount');
+        if (advInput) advInput.value = "";
+        handleBuildingTypeChange();
         document.getElementById('editPropManagePlotsToggle').checked = false;
 
         document.getElementById('editPropThumbnailPreview').src = "https://images.unsplash.com/photo-1541888946425-d0fbb186156f?auto=format&fit=crop&w=600&q=80";
         document.getElementById('editPropMasterplanPreview').src = "";
         const fpPrev = document.getElementById('editPropFloorPlanPreview');
         if (fpPrev) fpPrev.src = "";
+        removePropVideo();
       } else {
         // Edit Mode
         const prop = cachedProperties.find(p => p.id === propId);
         if (!prop) return;
         document.getElementById('propEditorModalTitle').innerText = `Edit: ${prop.title} (ID #${prop.id})`;
         document.getElementById('editPropId').value = prop.id;
+        document.getElementById('editPropTitle').value = prop.title || "";
         let normalizedCat = prop.category || "Layout Promotion";
         if (normalizedCat === "Layout" || normalizedCat === "Promoting") normalizedCat = "Layout Promotion";
         if (normalizedCat === "Farm land" || normalizedCat === "Farmhouse Development") normalizedCat = "Farmland Development";
@@ -1826,6 +1902,13 @@
         document.getElementById('editPropBuildingType').value = prop.buildingType || "Independent House";
         document.getElementById('editPropConfiguration').value = prop.configuration || "";
         document.getElementById('editPropCarParking').value = prop.carParking || "With Car Parking";
+        const udsInput = document.getElementById('editPropUds');
+        if (udsInput) udsInput.value = prop.uds || "";
+        const rentInput = document.getElementById('editPropRentPrice');
+        if (rentInput) rentInput.value = prop.rentPrice || "";
+        const advInput = document.getElementById('editPropAdvanceAmount');
+        if (advInput) advInput.value = prop.advanceAmount || "";
+        handleBuildingTypeChange();
 
         modalPropGallery = Array.isArray(prop.gallery) ? [...prop.gallery] : [];
         modalPropBuildingPhotos = Array.isArray(prop.buildingPhotos) ? [...prop.buildingPhotos] : [];
@@ -1840,6 +1923,14 @@
         document.getElementById('editPropMasterplanPreview').src = prop.masterplanImage || "";
         const fpPrev = document.getElementById('editPropFloorPlanPreview');
         if (fpPrev) fpPrev.src = prop.floorPlanImage || "";
+
+        // Populate existing video
+        if (prop.videoUrl) {
+          handleVideoUrlInput(prop.videoUrl);
+          document.getElementById('editPropVideoUrlInput').value = prop.videoUrl;
+        } else {
+          removePropVideo();
+        }
       }
 
       renderModalBuildingPhotosPreviews();
@@ -2014,6 +2105,99 @@
       });
     }
 
+    let currentPropVideoUrl = '';
+    let stagedVideoFile = null;
+
+    function getEmbedVideoInfo(rawUrl) {
+      if (!rawUrl) return null;
+      const url = rawUrl.trim();
+
+      // YouTube: watch?v=, youtu.be/, shorts/, embed/
+      const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/i);
+      if (ytMatch && ytMatch[1]) {
+        return {
+          type: 'youtube',
+          videoId: ytMatch[1],
+          embedUrl: `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=0&rel=0&modestbranding=1`
+        };
+      }
+
+      // Instagram Reels / Posts: instagram.com/reel/CODE/, /p/CODE/
+      const igMatch = url.match(/instagram\.com\/(?:reel|reels|p)\/([a-zA-Z0-9_-]+)/i);
+      if (igMatch && igMatch[1]) {
+        return {
+          type: 'instagram',
+          shortcode: igMatch[1],
+          embedUrl: `https://www.instagram.com/reel/${igMatch[1]}/embed/`
+        };
+      }
+
+      // Direct MP4/WebM video file
+      return {
+        type: 'direct',
+        embedUrl: url
+      };
+    }
+
+    function previewVideoFile(input) {
+      if (!input.files || !input.files[0]) return;
+      const file = input.files[0];
+      stagedVideoFile = file;
+      const localUrl = URL.createObjectURL(file);
+      const previewWrapper = document.getElementById('editPropVideoPreviewWrapper');
+      const removeBtn = document.getElementById('editPropRemoveVideoBtn');
+      if (previewWrapper) {
+        previewWrapper.innerHTML = `<video controls playsinline class="w-full max-h-56 rounded-xl border border-slate-700 bg-black mb-2" src="${localUrl}"></video>`;
+        previewWrapper.classList.remove('hidden');
+      }
+      if (removeBtn) removeBtn.classList.remove('hidden');
+      document.getElementById('editPropVideoUrlInput').value = '';
+    }
+
+    function handleVideoUrlInput(val) {
+      currentPropVideoUrl = val.trim();
+      const previewWrapper = document.getElementById('editPropVideoPreviewWrapper');
+      const removeBtn = document.getElementById('editPropRemoveVideoBtn');
+      if (currentPropVideoUrl) {
+        stagedVideoFile = null;
+        document.getElementById('editPropVideoFile').value = '';
+        const info = getEmbedVideoInfo(currentPropVideoUrl);
+        if (previewWrapper && info) {
+          if (info.type === 'youtube' || info.type === 'instagram') {
+            previewWrapper.innerHTML = `
+              <div class="relative w-full aspect-video rounded-xl overflow-hidden border border-amber-500/40 bg-black mb-2">
+                <iframe src="${escapeHtml(info.embedUrl)}" class="w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              </div>
+            `;
+          } else {
+            previewWrapper.innerHTML = `<video controls playsinline class="w-full max-h-56 rounded-xl border border-slate-700 bg-black mb-2" src="${escapeHtml(info.embedUrl)}"></video>`;
+          }
+          previewWrapper.classList.remove('hidden');
+        }
+        if (removeBtn) removeBtn.classList.remove('hidden');
+      } else {
+        if (previewWrapper) {
+          previewWrapper.innerHTML = '';
+          previewWrapper.classList.add('hidden');
+        }
+        if (removeBtn) removeBtn.classList.add('hidden');
+      }
+    }
+
+    function removePropVideo() {
+      currentPropVideoUrl = '';
+      stagedVideoFile = null;
+      document.getElementById('editPropVideoFile').value = '';
+      document.getElementById('editPropVideoUrlInput').value = '';
+      const previewWrapper = document.getElementById('editPropVideoPreviewWrapper');
+      const removeBtn = document.getElementById('editPropRemoveVideoBtn');
+      if (previewWrapper) {
+        previewWrapper.innerHTML = '';
+        previewWrapper.classList.add('hidden');
+      }
+      if (removeBtn) removeBtn.classList.add('hidden');
+    }
+
     function removeModalGalleryItem(idx) {
       modalPropGallery.splice(idx, 1);
       renderModalGalleryPreviews();
@@ -2032,6 +2216,20 @@
       }
       input.value = '';
       renderModalGalleryPreviews();
+    }
+
+    function handleBuildingTypeChange() {
+      const bType = document.getElementById('editPropBuildingType').value;
+      const udsWrapper = document.getElementById('editPropUdsWrapper');
+      if (udsWrapper) {
+        if (bType === 'Apartment / Flat') {
+          udsWrapper.classList.remove('hidden');
+        } else {
+          udsWrapper.classList.add('hidden');
+          const udsInput = document.getElementById('editPropUds');
+          if (udsInput) udsInput.value = '';
+        }
+      }
     }
 
     function closePropertyEditorModal() {
@@ -2133,12 +2331,14 @@
       // 2. SECTION 3 DYNAMICS (AREA & SPECIFICATION INFORMATION)
       const grossAreaWrapper = document.getElementById('editPropGrossAreaWrapper');
       const carParkingWrapper = document.getElementById('editPropCarParkingWrapper');
+      const rentalPriceWrapper = document.getElementById('editPropRentalPriceWrapper');
 
       if (isRental) {
-        if (sec3Heading) sec3Heading.innerText = "3. AREA & PROPERTY INFORMATION";
+        if (sec3Heading) sec3Heading.innerText = "3. RENTAL DETAILS & SPECIFICATIONS";
         if (buildingFields) buildingFields.classList.remove('hidden');
         if (grossAreaWrapper) grossAreaWrapper.classList.add('hidden');
         if (carParkingWrapper) carParkingWrapper.classList.remove('hidden');
+        if (rentalPriceWrapper) rentalPriceWrapper.classList.remove('hidden');
         if (farmFields) farmFields.classList.add('hidden');
         if (layoutFields) layoutFields.classList.add('hidden');
         if (specsBox) specsBox.classList.add('hidden');
@@ -2147,13 +2347,24 @@
         if (buildingFields) buildingFields.classList.remove('hidden');
         if (grossAreaWrapper) grossAreaWrapper.classList.remove('hidden');
         if (carParkingWrapper) carParkingWrapper.classList.remove('hidden');
+        if (rentalPriceWrapper) rentalPriceWrapper.classList.add('hidden');
         if (farmFields) farmFields.classList.add('hidden');
         if (layoutFields) layoutFields.classList.add('hidden');
         if (specsBox) specsBox.classList.add('hidden');
       } else if (isFarm) {
-        if (sec3Heading) sec3Heading.innerText = "3. Farmhouse / Farmland Specifications";
+        if (sec3Heading) sec3Heading.innerText = "3. Farmland Specifications";
         if (buildingFields) buildingFields.classList.add('hidden');
-        if (farmFields) farmFields.classList.remove('hidden');
+        if (farmFields) {
+          farmFields.classList.remove('hidden');
+          farmFields.classList.remove('sm:grid-cols-2');
+          farmFields.classList.add('grid-cols-1');
+        }
+        const farmBuiltUp = document.getElementById('editPropFarmBuiltUpAreaWrapper');
+        if (farmBuiltUp) {
+          farmBuiltUp.classList.add('hidden');
+          const farmBuiltUpInput = document.getElementById('editPropBuiltUpArea');
+          if (farmBuiltUpInput) farmBuiltUpInput.value = '';
+        }
         if (layoutFields) layoutFields.classList.add('hidden');
         if (specsBox) specsBox.classList.add('hidden');
       } else {
@@ -2165,9 +2376,12 @@
       }
 
       // 3. SECTION 4 DYNAMICS (PROPERTY IMAGES & GALLERY)
+      const videoContainer = document.getElementById('editPropVideoContainer');
+
       if (isRental) {
         if (sec4Heading) sec4Heading.innerText = "4. PROPERTY IMAGES & GALLERY";
         if (masterplanContainer) masterplanContainer.classList.add('hidden');
+        if (videoContainer) videoContainer.classList.add('hidden');
         if (floorPlanContainer) floorPlanContainer.classList.remove('hidden');
         if (buildingPhotosContainer) buildingPhotosContainer.classList.remove('hidden');
         if (amenitiesContainer) amenitiesContainer.classList.remove('hidden');
@@ -2175,13 +2389,15 @@
       } else if (isBuilding) {
         if (sec4Heading) sec4Heading.innerText = "4. BUILDING IMAGES & AMENITIES";
         if (masterplanContainer) masterplanContainer.classList.add('hidden');
+        if (videoContainer) videoContainer.classList.add('hidden');
         if (floorPlanContainer) floorPlanContainer.classList.remove('hidden');
         if (buildingPhotosContainer) buildingPhotosContainer.classList.remove('hidden');
         if (amenitiesContainer) amenitiesContainer.classList.remove('hidden');
         if (plotManagementContainer) plotManagementContainer.classList.add('hidden');
       } else {
-        if (sec4Heading) sec4Heading.innerText = "4. Property Images & Blueprints";
+        if (sec4Heading) sec4Heading.innerText = "4. Property Images, Videos & Blueprints";
         if (masterplanContainer) masterplanContainer.classList.remove('hidden');
+        if (videoContainer) videoContainer.classList.remove('hidden');
         if (floorPlanContainer) floorPlanContainer.classList.add('hidden');
         if (buildingPhotosContainer) buildingPhotosContainer.classList.add('hidden');
         if (amenitiesContainer) amenitiesContainer.classList.add('hidden');
@@ -2252,6 +2468,9 @@
       let buildingType = '';
       let configuration = '';
       let carParking = '';
+      let uds = '';
+      let rentPrice = '';
+      let advanceAmount = '';
       let totalLandArea = '';
       let totalLandAreaUnit = 'acres';
 
@@ -2263,9 +2482,16 @@
           grossArea = document.getElementById('editPropGrossArea').value.trim();
           grossAreaUnit = document.getElementById('editPropGrossAreaUnit').value;
         }
+        if (isRental) {
+          rentPrice = document.getElementById('editPropRentPrice') ? document.getElementById('editPropRentPrice').value.trim() : '';
+          advanceAmount = document.getElementById('editPropAdvanceAmount') ? document.getElementById('editPropAdvanceAmount').value.trim() : '';
+        }
         buildingType = document.getElementById('editPropBuildingType').value;
         configuration = document.getElementById('editPropConfiguration').value;
         carParking = document.getElementById('editPropCarParking').value;
+        if (buildingType === 'Apartment / Flat') {
+          uds = document.getElementById('editPropUds') ? document.getElementById('editPropUds').value.trim() : '';
+        }
       } else if (isFarm) {
         totalLandArea = document.getElementById('editPropTotalLandArea').value.trim();
         totalLandAreaUnit = document.getElementById('editPropTotalLandAreaUnit').value;
@@ -2289,6 +2515,7 @@
         if (buildingType) specParts.push(`Type: ${buildingType}`);
         if (configuration) specParts.push(configuration);
         if (builtUpArea) specParts.push(`Built-up: ${builtUpArea} ${builtUpAreaUnit}`);
+        if (uds) specParts.push(`UDS: ${uds} sq.ft`);
         if (grossArea) specParts.push(`Gross Area: ${grossArea} ${grossAreaUnit}`);
         if (carParking) specParts.push(carParking);
         if (status) specParts.push(`Status: ${status}`);
@@ -2362,11 +2589,28 @@
           }
         }
 
+        // Upload video if a new video file was selected
+        let finalVideoUrl = currentPropVideoUrl;
+        if (stagedVideoFile) {
+          saveBtn.innerText = "Uploading promotional video (this may take a moment)...";
+          const videoBase64 = await readFileAsBase64(stagedVideoFile);
+          const videoRes = await adminFetch('/api/admin/upload-video', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ fileData: videoBase64, prefix: 'layout_video' })
+          });
+          const videoJson = await videoRes.json();
+          if (!videoRes.ok) throw new Error(videoJson.error || 'Failed to upload video');
+          finalVideoUrl = videoJson.url;
+        }
+
         const payload = {
           title, category, location, status, isPublished, isArchived,
           ownerName, ownerPhone, internalPrice, sanctionNumber, plotCount, specs, desc,
           clientName, builtUpArea, builtUpAreaUnit, grossArea, grossAreaUnit,
-          buildingType, configuration, carParking,
+          buildingType, configuration, carParking, uds,
+          rentPrice, advanceAmount,
+          videoUrl: finalVideoUrl,
           totalLandArea, totalLandAreaUnit, managePlots,
           gallery: finalGallery,
           buildingPhotos: finalBuildingPhotos,
@@ -2444,6 +2688,70 @@
     }
 
     // ----------------- PLOTS MANAGEMENT (PER LAYOUT) -----------------
+    function isCurrentLayoutFarmland() {
+      const currentLayoutProp = cachedProperties.find(p => p.id === selectedPlotLayoutId);
+      if (!currentLayoutProp) return false;
+      const cat = currentLayoutProp.category || '';
+      return (cat === 'Farmland Development' || cat === 'Farmhouse Development' || cat === 'Farm land');
+    }
+
+    function updatePlotFormUnits() {
+      const isFarm = isCurrentLayoutFarmland();
+      const label = document.getElementById('plotAreaLabel');
+      const input = document.getElementById('plotAreaInput');
+      const sqmWrapper = document.getElementById('plotSqmCalcWrapper');
+      const plotTypeWrap = document.getElementById('plotTypeWrapper');
+      const plotTypeSelect = document.getElementById('plotTypeInput');
+
+      if (label) {
+        label.innerText = isFarm ? "Area (Cents) *" : "Area (Sq.Ft)";
+      }
+      if (input) {
+        input.placeholder = isFarm ? "e.g. 15.5 or 25" : "e.g. 1500";
+      }
+      if (sqmWrapper) {
+        if (isFarm) {
+          sqmWrapper.classList.remove('hidden');
+        } else {
+          sqmWrapper.classList.add('hidden');
+        }
+      }
+      if (plotTypeWrap) {
+        if (isFarm) {
+          plotTypeWrap.classList.add('hidden');
+          if (plotTypeSelect) plotTypeSelect.value = 'Farm Plot';
+        } else {
+          plotTypeWrap.classList.remove('hidden');
+          if (plotTypeSelect && plotTypeSelect.value === 'Farm Plot') {
+            plotTypeSelect.value = 'Residential';
+          }
+        }
+      }
+      handlePlotAreaCalc();
+    }
+
+    function handlePlotAreaCalc() {
+      const isFarm = isCurrentLayoutFarmland();
+      const input = document.getElementById('plotAreaInput');
+      const sqmWrapper = document.getElementById('plotSqmCalcWrapper');
+      const sqmText = document.getElementById('plotSqmCalcText');
+      if (!input || !sqmText) return;
+
+      const val = parseFloat(input.value);
+      if (isFarm) {
+        if (sqmWrapper) sqmWrapper.classList.remove('hidden');
+        if (!isNaN(val) && val > 0) {
+          // 1 Cent = 40.4686 Sq.M (standard Tamil Nadu revenue survey measurement)
+          const sqMeters = (val * 40.4685642).toFixed(2);
+          sqmText.innerText = `${sqMeters} Sq.M (${(val * 435.6).toFixed(0)} Sq.Ft)`;
+        } else {
+          sqmText.innerText = `0 Sq.M`;
+        }
+      } else {
+        if (sqmWrapper) sqmWrapper.classList.add('hidden');
+      }
+    }
+
     function renderPlotLayoutSelector() {
       const selector = document.getElementById('plotLayoutSelector');
       if (!selector) return;
@@ -2462,6 +2770,7 @@
       if (titleLabel) {
         titleLabel.innerText = currentLayoutProp ? `${currentLayoutProp.title} (ID #${currentLayoutProp.id})` : "Sowbhagya Nagar Layout";
       }
+      updatePlotFormUnits();
     }
 
     function handlePlotLayoutChange() {
@@ -2473,6 +2782,7 @@
         if (titleLabel) {
           titleLabel.innerText = currentLayoutProp ? `${currentLayoutProp.title} (ID #${currentLayoutProp.id})` : "Selected Layout";
         }
+        updatePlotFormUnits();
         resetPlotForm();
         renderPlots();
       }
@@ -2540,7 +2850,15 @@
         if (plotSt === 'Booked') statusBadgeClass = 'bg-amber-500/10 text-amber-300 border border-amber-500/30';
         if (plotSt === 'Sold') statusBadgeClass = 'bg-rose-500/10 text-rose-400 border border-rose-500/30';
 
-        const areaStr = plot.areaSqft ? `${plot.areaSqft} Sq.Ft` : (plot.dimension || 'Standard');
+        const isFarmLayout = isCurrentLayoutFarmland();
+        let areaStr = plot.areaSqft ? `${plot.areaSqft} Sq.Ft` : (plot.dimension || 'Standard');
+        if (isFarmLayout) {
+          const centsVal = plot.areaCents !== undefined && plot.areaCents !== '' ? plot.areaCents : (plot.areaSqft ? (plot.areaSqft / 435.6).toFixed(2) : '');
+          const sqmVal = plot.areaSqm !== undefined && plot.areaSqm !== '' ? plot.areaSqm : (plot.areaSqft ? (plot.areaSqft * 0.092903).toFixed(2) : '');
+          if (centsVal) {
+            areaStr = `${centsVal} Cents (${sqmVal || (centsVal * 40.4686).toFixed(2)} Sq.M)`;
+          }
+        }
         const dimStr = (plot.dimension && plot.dimension !== areaStr) ? ` • Dim: ${plot.dimension}` : '';
         const notesStr = plot.notes ? ` • <span class="text-amber-300/80 font-mono italic">Note: ${escapeHtml(plot.notes)}</span>` : '';
         const plotThumbHtml = plot.image ? `<img src="${plot.image}" class="w-10 h-10 rounded-lg object-cover border border-amber-400/40 flex-shrink-0" alt="Plot photo">` : '';
@@ -2554,11 +2872,11 @@
               <div class="flex items-center gap-2.5 flex-wrap">
                 <span class="font-bold text-white text-base sm:text-lg">${escapeHtml(plot.number)}</span>
                 <span class="text-xs font-bold px-2.5 py-1 rounded-lg tracking-wide uppercase ${statusBadgeClass}">${plotSt}</span>
-                <span class="text-xs bg-slate-800 text-amber-300 font-bold px-2.5 py-1 rounded-lg border border-slate-700">${escapeHtml(plot.plotType || 'Residential')}</span>
+                ${!isFarmLayout ? `<span class="text-xs bg-slate-800 text-amber-300 font-bold px-2.5 py-1 rounded-lg border border-slate-700">${escapeHtml(plot.plotType || 'Residential')}</span>` : ''}
                 ${plot.image ? '<span class="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-bold">📷 Photo</span>' : ''}
               </div>
               <div class="text-xs sm:text-sm text-slate-300">
-                Area: <strong class="text-white">${escapeHtml(areaStr)}</strong>${escapeHtml(dimStr)} • Facing: <strong>${escapeHtml(plot.facing || 'East')}</strong> • Public Rate: <span class="text-amber-400 font-bold">To be Negotiable</span>
+                Area: <strong class="text-white">${escapeHtml(areaStr)}</strong>${escapeHtml(dimStr)} • Facing: <strong>${escapeHtml(plot.facing || 'East')}</strong> • Public Rate: <span class="text-amber-400 font-bold">${escapeHtml(plot.price || 'To be Negotiable')}</span>
               </div>
               <div class="text-xs text-slate-400">
                 Layout: <strong class="text-slate-300">${escapeHtml(currentLayoutName)}</strong> (ID #${selectedPlotLayoutId})${notesStr}
@@ -2637,17 +2955,60 @@
       renderPlotGalleryPreviews();
     }
 
+    function handlePlotPriceModeChange() {
+      const mode = document.getElementById('plotPriceMode').value;
+      const input = document.getElementById('plotPriceInput');
+      if (mode === 'custom') {
+        input.classList.remove('hidden');
+        input.focus();
+      } else {
+        input.classList.add('hidden');
+        input.value = '';
+      }
+    }
+
     function editPlotInForm(plotId) {
       const plot = cachedPlots.find(p => p.id === plotId);
       if (!plot) return;
 
+      const isFarmLayout = isCurrentLayoutFarmland();
+
       document.getElementById('editingPlotId').value = plot.id;
       document.getElementById('plotNumInput').value = plot.number || '';
-      document.getElementById('plotAreaInput').value = plot.areaSqft || '';
+      
+      if (isFarmLayout) {
+        let centsVal = '';
+        if (plot.areaCents !== undefined && plot.areaCents !== '') {
+          centsVal = plot.areaCents;
+        } else if (plot.areaSqft) {
+          centsVal = parseFloat((plot.areaSqft / 435.6).toFixed(2));
+        }
+        document.getElementById('plotAreaInput').value = centsVal;
+      } else {
+        document.getElementById('plotAreaInput').value = plot.areaSqft || '';
+      }
+      handlePlotAreaCalc();
+
       document.getElementById('plotDimInput').value = plot.dimension || '';
       document.getElementById('plotFacingInput').value = plot.facing || '';
-      document.getElementById('plotTypeInput').value = plot.plotType || 'Residential';
+      document.getElementById('plotTypeInput').value = isFarmLayout ? 'Farm Plot' : (plot.plotType || 'Residential');
       document.getElementById('plotStatusInput').value = (plot.status === 'Active' ? 'Available' : (plot.status || 'Available'));
+      
+      const priceModeSelect = document.getElementById('plotPriceMode');
+      const priceInput = document.getElementById('plotPriceInput');
+      if (plot.price && plot.price.trim() !== '' && plot.price !== 'To be Negotiable') {
+        if (priceModeSelect) priceModeSelect.value = 'custom';
+        if (priceInput) {
+          priceInput.value = plot.price;
+          priceInput.classList.remove('hidden');
+        }
+      } else {
+        if (priceModeSelect) priceModeSelect.value = 'negotiable';
+        if (priceInput) {
+          priceInput.value = '';
+          priceInput.classList.add('hidden');
+        }
+      }
       document.getElementById('plotNotesInput').value = plot.notes || '';
 
       // Initialize Plot Gallery (aggregating image & gallery)
@@ -2681,6 +3042,13 @@
       document.getElementById('plotFacingInput').value = '';
       document.getElementById('plotTypeInput').value = 'Residential';
       document.getElementById('plotStatusInput').value = 'Available';
+      const priceModeSelect = document.getElementById('plotPriceMode');
+      if (priceModeSelect) priceModeSelect.value = 'negotiable';
+      const priceInput = document.getElementById('plotPriceInput');
+      if (priceInput) {
+        priceInput.value = '';
+        priceInput.classList.add('hidden');
+      }
       document.getElementById('plotNotesInput').value = '';
 
       currentPlotGallery = [];
@@ -2692,17 +3060,40 @@
       document.getElementById('plotFormHeading').innerHTML = '<span class="text-amber-400">＋</span> Add New Plot to Selected Layout';
       document.getElementById('savePlotBtn').innerText = "Save Plot to Layout";
       document.getElementById('cancelEditPlotBtn').classList.add('hidden');
+      updatePlotFormUnits();
     }
 
     async function savePlotFormAction() {
       const editId = document.getElementById('editingPlotId').value;
       const number = document.getElementById('plotNumInput').value.trim();
-      const areaSqft = parseInt(document.getElementById('plotAreaInput').value, 10) || 0;
+      const rawAreaVal = parseFloat(document.getElementById('plotAreaInput').value);
+      const isFarmLayout = isCurrentLayoutFarmland();
+
+      let areaSqft = 0;
+      let areaCents = '';
+      let areaSqm = '';
+      let defaultDim = 'Standard';
+
+      if (isFarmLayout) {
+        if (!isNaN(rawAreaVal) && rawAreaVal > 0) {
+          areaCents = rawAreaVal;
+          areaSqm = (rawAreaVal * 40.4685642).toFixed(2);
+          areaSqft = Math.round(rawAreaVal * 435.6);
+          defaultDim = `${areaCents} Cents (${areaSqm} Sq.M)`;
+        }
+      } else {
+        areaSqft = parseInt(document.getElementById('plotAreaInput').value, 10) || 0;
+        if (areaSqft) defaultDim = `${areaSqft} Sq.Ft`;
+      }
+
       let dimension = document.getElementById('plotDimInput').value.trim();
-      if (!dimension && areaSqft) dimension = `${areaSqft} Sq.Ft`;
+      if (!dimension && defaultDim !== 'Standard') dimension = defaultDim;
       const facing = document.getElementById('plotFacingInput').value.trim() || 'East Facing';
       const plotType = document.getElementById('plotTypeInput').value;
       const status = document.getElementById('plotStatusInput').value;
+      const priceMode = document.getElementById('plotPriceMode') ? document.getElementById('plotPriceMode').value : 'negotiable';
+      const customPriceVal = document.getElementById('plotPriceInput') ? document.getElementById('plotPriceInput').value.trim() : '';
+      const finalPrice = (priceMode === 'custom' && customPriceVal) ? customPriceVal : 'To be Negotiable';
       const notes = document.getElementById('plotNotesInput').value.trim();
 
       if (!number) {
@@ -2726,12 +3117,14 @@
         layout: layoutTitle,
         number,
         areaSqft,
-        dimension: dimension || (areaSqft ? `${areaSqft} Sq.Ft` : 'Standard'),
+        areaCents: areaCents !== '' ? areaCents : undefined,
+        areaSqm: areaSqm !== '' ? areaSqm : undefined,
+        dimension: dimension || defaultDim,
         facing,
         plotType,
         status: (status === 'Active' ? 'Available' : status),
         notes,
-        price: "To be Negotiable"
+        price: finalPrice
       };
 
       const saveBtn = document.getElementById('savePlotBtn');
