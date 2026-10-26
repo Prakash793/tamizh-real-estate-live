@@ -154,6 +154,12 @@
         <a href="/" target="_blank" class="text-xs sm:text-sm text-slate-300 hover:text-white transition hidden sm:inline font-semibold">
           View Public Site ↗
         </a>
+        <a href="/magazine.html" target="_blank" class="text-xs sm:text-sm bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl shadow-md transition flex items-center gap-1.5" title="Generate Master Layout Magazine & Plot Dossier">
+          <span>📰</span> Layout Magazine
+        </a>
+        <button onclick="downloadDatabaseBackup()" class="text-xs sm:text-sm bg-teal-900/60 hover:bg-teal-800 text-teal-300 font-bold px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-teal-500/40 transition flex items-center gap-1.5" title="Download offline JSON backup">
+          <span>💾</span> Backup Data
+        </button>
         <button onclick="openCredentialsModal()" class="text-xs sm:text-sm bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-slate-700 transition">
           🔑 Change Password
         </button>
@@ -1410,6 +1416,33 @@
         if (happySec) happySec.classList.remove('hidden');
         if (happyBtn) happyBtn.className = activeCls;
         renderHappyCustomersList();
+      }
+    }
+
+    async function downloadDatabaseBackup() {
+      try {
+        const backupData = {
+          exportDate: new Date().toISOString(),
+          version: "2.0",
+          properties: cachedProperties,
+          plots: cachedPlots,
+          layoutDoc: cachedLayoutDoc,
+          reviews: cachedReviews,
+          happyCustomers: cachedHappyCustomers,
+          servicePanels: cachedServicePanels,
+          socialSettings: cachedSocialSettings
+        };
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
+        const dlAnchor = document.createElement('a');
+        dlAnchor.setAttribute("href", dataStr);
+        const dateStr = new Date().toISOString().split('T')[0];
+        dlAnchor.setAttribute("download", `tamizh_real_estate_backup_${dateStr}.json`);
+        document.body.appendChild(dlAnchor);
+        dlAnchor.click();
+        dlAnchor.remove();
+        alert("Database backup downloaded successfully!");
+      } catch (err) {
+        alert("Failed to export backup: " + err.message);
       }
     }
 
