@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tamizh Real Estate - Admin Master Layout Magazine & Portfolio Dossier</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Noto+Sans+Tamil:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: #0b1120;
+      color: #0f172a;
+    }
+    .font-lux { font-family: 'Cinzel', serif; }
+    .font-tamil { font-family: 'Noto Sans Tamil', sans-serif; }
+
+    /* A4 PAGE SPECIFICATIONS */
+    .a4-page {
+      width: 210mm;
+      min-height: 297mm;
+      padding: 16mm 18mm;
+      margin: 20px auto;
+      background: #ffffff;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+      border-radius: 6px;
+      position: relative;
+      page-break-after: always;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    @media print {
+      body {
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .a4-page {
+        margin: 0 !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        page-break-after: always !important;
+        padding: 12mm 15mm !important;
+      }
+    }
+
+    .gold-gradient {
+      background: linear-gradient(135deg, #DFAC43 0%, #B8860B 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
+</head>
+<body class="antialiased py-6">
+
+  <!-- TOP ACTION TOOLBAR (SCREEN ONLY) -->
+  <header class="no-print max-w-[210mm] mx-auto mb-6 px-4 py-3.5 bg-slate-900 border border-amber-500/30 rounded-2xl flex items-center justify-between shadow-2xl">
+    <div class="flex items-center gap-3">
+      <img src="/logo.png" alt="Logo" class="w-10 h-10 object-contain rounded-full border border-amber-400 bg-slate-950">
+      <div>
+        <h1 class="text-white font-extrabold text-sm sm:text-base font-lux gold-gradient">TAMIZH REAL ESTATE</h1>
+        <p class="text-slate-400 text-xs">Official Master Layout & Plot Inventory Magazine (Admin Dossier)</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2.5">
+      <a href="/admin.html" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs border border-slate-700 transition">
+        ← Back to Admin
+      </a>
+      <button onclick="window.print()" class="px-5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-xs shadow-lg transition flex items-center gap-1.5 hover:scale-105">
+        <span>🖨️</span> Print Magazine / Save as PDF
+      </button>
+    </div>
+  </header>
+
+  <!-- MAGAZINE CONTAINER POPULATED DYNAMICALLY -->
+  <main id="magazinePagesContainer">
+    <!-- Rendered via JS -->
+  </main>
+
+  <script>
+    async function loadMagazineData() {
+      try {
+        const res = await fetch('/api/public/data');
+        const data = await res.json();
+        
+        let adminProperties = data.properties || [];
+        // Attempt to fetch confidential admin fields if authenticated
+        try {
+          const authRes = await fetch('/api/admin/properties');
+          if (authRes.ok) {
+            const authData = await authRes.json();
+            if (authData.properties && authData.properties.length > 0) {
+              adminProperties = authData.properties;
+            }
+          }
+        } catch (e) {
+          console.log("Using public properties dataset.");
+        }
+
+        const plots = data.plots || [];
+        const layoutDoc = data.layoutDoc || {};
+
+        renderMagazine(adminProperties, plots, layoutDoc);
+      } catch (err) {
+        console.error("Failed to load magazine data:", err);
+      }
+    }
+
+    function renderMagazine(properties, plots, layoutDoc) {
+      const container = document.getElementById('magazinePagesContainer');
+      container.innerHTML = '';
+
+      const today = new Date().toLocaleDateString('en-IN', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
+
+      // ----------------------------------------------------------------------
+      // PAGE 1: LUXURY EXECUTIVE COVER PAGE
+      // ----------------------------------------------------------------------
+      const coverPage = document.createElement('article');
+      coverPage.className = 'a4-page border-4 border-double border-amber-600/40 justify-between';
+      coverPage.innerHTML = `
+        <div class="text-right border-b-2 border-amber-500/30 pb-3">
+          <span class="text-xs font-black tracking-widest uppercase text-slate-500">Official Office Document • Confidential Portfolio</span>
+          <div class="text-[11px] font-bold text-amber-700 mt-0.5">Edition Date: ${today}</div>
+        </div>
+
+        <div class="my-auto text-center space-y-6 py-10">
+          <div class="w-36 h-36 mx-auto rounded-full p-1.5 bg-gradient-to-tr from-amber-600 via-amber-400 to-amber-700 shadow-2xl">
+            <img src="/logo.png" alt="Seal" class="w-full h-full object-contain rounded-full bg-slate-950 border-2 border-amber-300">
+          </div>
+
+          <div class="space-y-2">
+            <h1 class="text-3xl sm:text-4xl font-black font-lux tracking-wider text-slate-900">
+              TAMIZH REAL ESTATE
+            </h1>
+            <p class="text-sm font-tamil font-bold text-amber-800 tracking-wide">
+              தமிழ் ரியல் எஸ்டேட் • மனை, தோட்டம் & கட்டடங்கள்
+            </p>
+            <div class="w-24 h-1 bg-amber-500 mx-auto rounded-full mt-2"></div>
+          </div>
+
+          <div class="max-w-md mx-auto pt-4 space-y-2">
+            <div class="text-xl font-black text-slate-800 uppercase tracking-widest font-lux">
+              Master Layout & Subdivided Plot Magazine
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed font-medium">
+              Comprehensive land promotion records, DTCP sanctioned reference maps, plot extent inventory, and verified title clearance registry.
+            </p>
+          </div>
+
+          <!-- Key Metrics Badges -->
+          <div class="grid grid-cols-3 gap-3 max-w-lg mx-auto pt-4">
+            <div class="p-3 bg-amber-50 rounded-xl border border-amber-300 text-center">
+              <span class="text-[10px] uppercase font-bold text-slate-500 block">Total Layouts</span>
+              <span class="text-xl font-black text-amber-900">${properties.length}</span>
+            </div>
+            <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-300 text-center">
+              <span class="text-[10px] uppercase font-bold text-slate-500 block">Total Plots</span>
+              <span class="text-xl font-black text-emerald-900">${plots.length}</span>
+            </div>
+            <div class="p-3 bg-blue-50 rounded-xl border border-blue-300 text-center">
+              <span class="text-[10px] uppercase font-bold text-slate-500 block">Legal Title</span>
+              <span class="text-base font-black text-blue-900">100% DTCP</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="border-t-2 border-amber-500/30 pt-4 flex items-center justify-between text-xs text-slate-600">
+          <div>
+            <strong class="text-slate-900 font-bold block">Proprietor: K. Kulasekaran</strong>
+            <span>25+ Years Proven Track Record • Kayarambedu & Guduvanchery</span>
+          </div>
+          <div class="text-right">
+            <strong class="text-slate-900 font-bold block">📞 +91 98406 15219 / 86677 49580</strong>
+            <span>tamizhrealestate@gmail.com</span>
+          </div>
+        </div>
+      `;
+      container.appendChild(coverPage);
+
+      // ----------------------------------------------------------------------
+      // PAGE 2: PORTFOLIO SUMMARY & OVERVIEW
+      // ----------------------------------------------------------------------
+      const summaryPage = document.createElement('article');
+      summaryPage.className = 'a4-page border border-slate-200';
+      summaryPage.innerHTML = `
+        <div>
+          <!-- Header -->
+          <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-5">
+            <div class="flex items-center gap-2.5">
+              <img src="/logo.png" class="w-8 h-8 rounded-full bg-slate-950">
+              <span class="font-lux font-bold text-slate-900 text-sm tracking-wide">TAMIZH REAL ESTATE • EXECUTIVE PORTFOLIO</span>
+            </div>
+            <span class="text-xs font-mono font-bold text-slate-400">PAGE 02</span>
+          </div>
+
+          <h2 class="text-xl font-black text-slate-900 uppercase tracking-wide border-l-4 border-amber-500 pl-3 mb-2">
+            Section 1: Active Layout & Project Registry
+          </h2>
+          <p class="text-xs text-slate-500 mb-5 leading-relaxed">
+            Consolidated table of all published and managed property developments under direct administration of Mr. K. Kulasekaran.
+          </p>
+
+          <!-- Table of Properties -->
+          <div class="overflow-hidden rounded-xl border border-slate-300 mb-6">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-100 text-slate-800 font-extrabold uppercase border-b border-slate-300">
+                <tr>
+                  <th class="p-2.5">#</th>
+                  <th class="p-2.5">Project / Layout Name</th>
+                  <th class="p-2.5">Category</th>
+                  <th class="p-2.5">Location</th>
+                  <th class="p-2.5">Sanction / Approval</th>
+                  <th class="p-2.5">Plots</th>
+                  <th class="p-2.5">Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200 text-slate-700">
+                ${properties.map((p, idx) => {
+                  const linkedPlots = plots.filter(pl => (pl.layoutId || 1) === p.id);
+                  return `
+                    <tr class="${idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/60'}">
+                      <td class="p-2.5 font-bold">${idx + 1}</td>
+                      <td class="p-2.5 font-extrabold text-slate-900">${escapeHtml(p.title)}</td>
+                      <td class="p-2.5 font-semibold text-slate-600">${escapeHtml(p.category)}</td>
+                      <td class="p-2.5">${escapeHtml(p.location)}</td>
+                      <td class="p-2.5 font-mono text-[11px] text-amber-800">${p.sanctionNumber ? escapeHtml(p.sanctionNumber) : 'Direct Approval'}</td>
+                      <td class="p-2.5 font-bold text-center">${linkedPlots.length || p.plotCount || '--'}</td>
+                      <td class="p-2.5">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase ${p.status === 'Available' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-800'}">
+                          ${escapeHtml(p.status || 'Active')}
+                        </span>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Strategic Features Matrix -->
+          <h3 class="text-sm font-black text-slate-900 uppercase tracking-wide mb-3">
+            Key Infrastructure & Verified Legal Parameters
+          </h3>
+          <div class="grid grid-cols-2 gap-3.5 mb-5 text-xs">
+            <div class="p-3.5 rounded-xl bg-amber-50/60 border border-amber-200 space-y-1">
+              <strong class="text-amber-900 font-bold block">🌊 100% Sweet Potable Ground Water</strong>
+              <p class="text-slate-600 text-[11px] leading-relaxed">
+                Independent borewell tests confirm pure drinking water available at shallow 40–60 ft depth across Kayarambedu parcels.
+              </p>
+            </div>
+            <div class="p-3.5 rounded-xl bg-emerald-50/60 border border-emerald-200 space-y-1">
+              <strong class="text-emerald-900 font-bold block">🛡️ Elevated Natural High Land</strong>
+              <p class="text-slate-600 text-[11px] leading-relaxed">
+                Zero flood water stagnation history during 2015 & 2023 monsoons. Natural drainage slope toward arterial canals.
+              </p>
+            </div>
+            <div class="p-3.5 rounded-xl bg-blue-50/60 border border-blue-200 space-y-1">
+              <strong class="text-blue-900 font-bold block">🛣️ Wide Blacktop Tar Roads</strong>
+              <p class="text-slate-600 text-[11px] leading-relaxed">
+                All sanctioned layouts feature dedicated 30ft & 40ft blacktop approach roads handed over to local panchayat.
+              </p>
+            </div>
+            <div class="p-3.5 rounded-xl bg-purple-50/60 border border-purple-200 space-y-1">
+              <strong class="text-purple-900 font-bold block">🏦 Pre-Approved Bank Loan Ties</strong>
+              <p class="text-slate-600 text-[11px] leading-relaxed">
+                Eligible for up to 80%–85% housing/plot loans with SBI, HDFC, ICICI, LIC HFL, and Indian Bank with title clearance on file.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="border-t border-slate-200 pt-3 flex justify-between items-center text-[10px] text-slate-500">
+          <span>Tamizh Real Estate Official Dossier • Proprietor: K. Kulasekaran</span>
+          <span>Printed on: ${today}</span>
+        </div>
+      `;
+      container.appendChild(summaryPage);
+
+      // ----------------------------------------------------------------------
+      // INDIVIDUAL LAYOUT SHEETS WITH RESPECTIVE PLOTS
+      // ----------------------------------------------------------------------
+      const layoutProperties = properties.filter(p => p.category === 'Layout Promotion' || p.category === 'Buying & Selling Resale Plots' || p.category === 'Layout');
+
+      layoutProperties.forEach((lp, lIdx) => {
+        const layoutPlots = plots.filter(pl => (pl.layoutId || 1) === lp.id);
+        const availCount = layoutPlots.filter(p => p.status === 'Available' || p.status === 'Active').length;
+        const bookedCount = layoutPlots.filter(p => p.status === 'Booked').length;
+        const soldCount = layoutPlots.filter(p => p.status === 'Sold').length;
+
+        const layoutSheet = document.createElement('article');
+        layoutSheet.className = 'a4-page border border-slate-200';
+        layoutSheet.innerHTML = `
+          <div>
+            <!-- Header -->
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
+              <div class="flex items-center gap-2.5">
+                <img src="/logo.png" class="w-8 h-8 rounded-full bg-slate-950">
+                <span class="font-lux font-bold text-slate-900 text-sm tracking-wide">TAMIZH REAL ESTATE • LAYOUT SPECIFICATION</span>
+              </div>
+              <span class="text-xs font-mono font-bold text-slate-400">PAGE ${String(3 + lIdx).padStart(2, '0')}</span>
+            </div>
+
+            <!-- Title Header -->
+            <div class="flex items-center justify-between flex-wrap gap-2 mb-4 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+              <div>
+                <span class="text-[10px] uppercase font-black text-amber-700 tracking-wider">DTCP Sanctioned Layout Record</span>
+                <h2 class="text-xl font-black text-slate-900 font-lux">${escapeHtml(lp.title)}</h2>
+                <div class="text-xs text-slate-600 font-medium">
+                  Location: <strong class="text-slate-900">${escapeHtml(lp.location)}</strong> 
+                  ${lp.sanctionNumber ? `• Sanction: <strong class="text-amber-800">${escapeHtml(lp.sanctionNumber)}</strong>` : ''}
+                </div>
+              </div>
+              <div class="flex items-center gap-2 text-xs">
+                <span class="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 font-bold">Avail: ${availCount}</span>
+                <span class="px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 font-bold">Booked: ${bookedCount}</span>
+                <span class="px-2.5 py-1 rounded-lg bg-rose-100 text-rose-800 font-bold">Sold: ${soldCount}</span>
+              </div>
+            </div>
+
+            <!-- Layout Image & Specs Grid -->
+            <div class="grid grid-cols-12 gap-4 mb-5 items-center">
+              <div class="col-span-5 h-44 rounded-xl overflow-hidden border border-slate-300 bg-slate-100 flex items-center justify-center">
+                <img src="${lp.masterplanImage || lp.image || '/logo.png'}" alt="Masterplan" class="w-full h-full object-cover">
+              </div>
+              <div class="col-span-7 space-y-2 text-xs">
+                <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-200 flex justify-between">
+                  <span class="text-slate-500 font-semibold">Total Subdivided Plots:</span>
+                  <span class="font-extrabold text-slate-900">${layoutPlots.length || lp.plotCount || '--'}</span>
+                </div>
+                <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-200 flex justify-between">
+                  <span class="text-slate-500 font-semibold">Road Widths:</span>
+                  <span class="font-extrabold text-slate-900">30 Ft & 40 Ft Blacktop Roads</span>
+                </div>
+                <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-200 flex justify-between">
+                  <span class="text-slate-500 font-semibold">Legal Clearance:</span>
+                  <span class="font-extrabold text-emerald-700">100% Clear Title • Single Owner</span>
+                </div>
+                <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-200 flex justify-between">
+                  <span class="text-slate-500 font-semibold">Public Commercial Rate:</span>
+                  <span class="font-extrabold text-amber-800 font-lux">To be Negotiable</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Plots Table for this layout -->
+            <h3 class="text-xs font-black text-slate-900 uppercase tracking-wide mb-2 flex items-center gap-1.5">
+              <span>📐</span> Subdivided Plot Inventory Matrix (${layoutPlots.length} Plots on record)
+            </h3>
+
+            <div class="overflow-hidden rounded-xl border border-slate-300 mb-4">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-100 text-slate-800 font-extrabold uppercase border-b border-slate-300">
+                  <tr>
+                    <th class="p-2">Plot #</th>
+                    <th class="p-2">Area (Sq.Ft)</th>
+                    <th class="p-2">Dimensions</th>
+                    <th class="p-2">Facing</th>
+                    <th class="p-2">Type</th>
+                    <th class="p-2">Status</th>
+                    <th class="p-2">Internal Notes</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200 text-slate-700">
+                  ${layoutPlots.length > 0 ? layoutPlots.map((pl, pIdx) => {
+                    const st = (pl.status === 'Active' ? 'Available' : pl.status);
+                    let stCls = 'bg-emerald-100 text-emerald-800';
+                    if (st === 'Booked') stCls = 'bg-amber-100 text-amber-800';
+                    if (st === 'Sold') stCls = 'bg-rose-100 text-rose-800';
+
+                    return `
+                      <tr class="${pIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50/60'}">
+                        <td class="p-2 font-black text-slate-900">${escapeHtml(pl.number)}</td>
+                        <td class="p-2 font-extrabold text-slate-800">${pl.areaSqft ? `${pl.areaSqft} sqft` : 'Standard'}</td>
+                        <td class="p-2 text-slate-500">${escapeHtml(pl.dimension || '--')}</td>
+                        <td class="p-2 font-bold text-slate-700">${escapeHtml(pl.facing || 'East')}</td>
+                        <td class="p-2 text-slate-600">${escapeHtml(pl.plotType || 'Residential')}</td>
+                        <td class="p-2">
+                          <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase ${stCls}">
+                            ${st}
+                          </span>
+                        </td>
+                        <td class="p-2 text-[10px] font-mono text-slate-500">${escapeHtml(pl.notes || 'Direct Sale')}</td>
+                      </tr>
+                    `;
+                  }).join('') : `
+                    <tr>
+                      <td colspan="7" class="p-4 text-center text-slate-400 italic">No subdivided plot records found for this layout.</td>
+                    </tr>
+                  `}
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Optional Private Landowner Info if available in Admin dataset -->
+            ${lp.ownerName || lp.internalPrice ? `
+              <div class="p-3 bg-amber-50/70 border border-amber-300 rounded-xl text-xs space-y-1">
+                <span class="text-[10px] uppercase font-black text-amber-900 block">🔒 Private Office Record (Confidential):</span>
+                <div class="flex justify-between text-slate-800">
+                  <span>Landowner Contact: <strong>${escapeHtml(lp.ownerName || 'Direct')}</strong> (${escapeHtml(lp.ownerPhone || 'On File')})</span>
+                  <span>Internal Target Rate: <strong>${escapeHtml(lp.internalPrice || 'As Agreed')}</strong></span>
+                </div>
+              </div>
+            ` : ''}
+
+          </div>
+
+          <!-- Footer -->
+          <div class="border-t border-slate-200 pt-3 flex justify-between items-center text-[10px] text-slate-500">
+            <span>Layout: ${escapeHtml(lp.title)} • Tamizh Real Estate Official Dossier</span>
+            <span>Ref: DTCP Sanction On File</span>
+          </div>
+        `;
+        container.appendChild(layoutSheet);
+      });
+
+      // ----------------------------------------------------------------------
+      // OTHER VERTICALS (BUILDINGS, FARMLAND, RENTALS)
+      // ----------------------------------------------------------------------
+      const otherProperties = properties.filter(p => p.category !== 'Layout Promotion' && p.category !== 'Buying & Selling Resale Plots' && p.category !== 'Layout');
+
+      if (otherProperties.length > 0) {
+        const otherSheet = document.createElement('article');
+        otherSheet.className = 'a4-page border border-slate-200';
+        otherSheet.innerHTML = `
+          <div>
+            <!-- Header -->
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
+              <div class="flex items-center gap-2.5">
+                <img src="/logo.png" class="w-8 h-8 rounded-full bg-slate-950">
+                <span class="font-lux font-bold text-slate-900 text-sm tracking-wide">TAMIZH REAL ESTATE • CONSTRUCTION & FARMLAND</span>
+              </div>
+              <span class="text-xs font-mono font-bold text-slate-400">PAGE ${String(3 + layoutProperties.length).padStart(2, '0')}</span>
+            </div>
+
+            <h2 class="text-xl font-black text-slate-900 uppercase tracking-wide border-l-4 border-amber-500 pl-3 mb-2">
+              Section 2: Farmland, Turnkey Villas & Rental Developments
+            </h2>
+            <p class="text-xs text-slate-500 mb-5 leading-relaxed">
+              Active projects across Building Construction, Agricultural Farmlands, and Commercial/Rental holdings.
+            </p>
+
+            <div class="space-y-4">
+              ${otherProperties.map((p, idx) => `
+                <div class="p-4 rounded-xl border border-slate-300 bg-slate-50 space-y-2">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <span class="text-[10px] uppercase font-black px-2 py-0.5 rounded bg-amber-100 text-amber-800">${escapeHtml(p.category)}</span>
+                      <h3 class="text-base font-extrabold text-slate-900 mt-1">${escapeHtml(p.title)}</h3>
+                      <p class="text-xs text-slate-600">Location: <strong>${escapeHtml(p.location)}</strong></p>
+                    </div>
+                    <span class="text-xs font-bold px-2.5 py-1 rounded bg-slate-200 text-slate-800">${escapeHtml(p.status || 'Active')}</span>
+                  </div>
+
+                  <div class="grid grid-cols-3 gap-2 text-xs pt-2 border-t border-slate-200">
+                    ${p.buildingType ? `<div><span class="text-slate-400 block text-[10px]">Type:</span><strong class="text-slate-800">${escapeHtml(p.buildingType)}</strong></div>` : ''}
+                    ${p.builtUpArea ? `<div><span class="text-slate-400 block text-[10px]">Built-up Area:</span><strong class="text-slate-800">${p.builtUpArea} ${p.builtUpAreaUnit || 'sqft'}</strong></div>` : ''}
+                    ${p.totalLandArea ? `<div><span class="text-slate-400 block text-[10px]">Land Area:</span><strong class="text-slate-800">${p.totalLandArea} ${p.totalLandAreaUnit || 'Acres'}</strong></div>` : ''}
+                  </div>
+
+                  ${p.desc ? `<p class="text-xs text-slate-600 italic pt-1 leading-relaxed">${escapeHtml(p.desc)}</p>` : ''}
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="border-t border-slate-200 pt-3 flex justify-between items-center text-[10px] text-slate-500">
+            <span>Tamizh Real Estate Official Dossier • Building & Farmland Registry</span>
+            <span>Printed on: ${today}</span>
+          </div>
+        `;
+        container.appendChild(otherSheet);
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    window.addEventListener('DOMContentLoaded', loadMagazineData);
+  </script>
+
+</body>
+</html>
