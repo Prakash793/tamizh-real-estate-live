@@ -22,7 +22,24 @@
     "specs": "Near by Metro Sattion, Good Ground water   under 100 feet",
     "desc": "Near by Metro Sattion, Good Ground water   under 100 feet",
     "createdAt": "2026-10-16T06:26:19.700Z",
-    "updatedAt": "2026-10-16T10:02:24.016Z"
+    "updatedAt": "2026-10-26T19:32:27.662Z",
+    "clientName": "",
+    "builtUpArea": "",
+    "builtUpAreaUnit": "sq.ft",
+    "grossArea": "",
+    "grossAreaUnit": "sq.ft",
+    "buildingType": "",
+    "configuration": "",
+    "carParking": "",
+    "uds": "",
+    "rentPrice": "",
+    "advanceAmount": "",
+    "videoUrl": "https://youtube.com/shorts/LhzG9AqodvQ?si=dsqoIx9nc_XiP_zG",
+    "totalLandArea": "",
+    "totalLandAreaUnit": "acres",
+    "managePlots": true,
+    "buildingPhotos": [],
+    "amenitiesPhotos": []
   },
   {
     "id": 2,
@@ -92,7 +109,7 @@
   },
   {
     "id": 3,
-    "title": "Tamizh Gardan",
+    "title": "Elite View Gardan",
     "category": "Farmland Development",
     "price": "To be Negotiable",
     "location": "ECR",
@@ -113,13 +130,22 @@
     "status": "Available",
     "specs": "Clear Title & Ownership Verified",
     "desc": "Very near by East Costal Area",
-    "totalLandArea": "",
+    "totalLandArea": "50000",
     "totalLandAreaUnit": "acres",
     "builtUpArea": "",
     "builtUpAreaUnit": "sq.ft",
     "managePlots": false,
     "createdAt": "2026-10-16T10:56:57.808Z",
-    "updatedAt": "2026-10-16T11:05:14.102Z"
+    "updatedAt": "2026-10-26T18:25:10.063Z",
+    "clientName": "",
+    "grossArea": "",
+    "grossAreaUnit": "sq.ft",
+    "buildingType": "",
+    "configuration": "",
+    "carParking": "",
+    "uds": "",
+    "buildingPhotos": [],
+    "amenitiesPhotos": []
   },
   {
     "id": 5,
@@ -164,6 +190,9 @@
     ],
     "managePlots": false,
     "createdAt": "2026-10-16T12:25:57.968Z",
-    "updatedAt": "2026-10-16T12:25:57.968Z"
+    "updatedAt": "2026-10-26T19:09:57.136Z",
+    "uds": "",
+    "rentPrice": "15000",
+    "advanceAmount": "5000000"
   }
 ]
