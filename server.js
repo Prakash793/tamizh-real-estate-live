@@ -73,7 +73,7 @@ function parseCookies(req) {
 }
 
 // Read body (supports JSON or base64 data payloads)
-function getRequestBody(req, maxBytes = 15 * 1024 * 1024) { // 15MB upload capacity
+function getRequestBody(req, maxBytes = 100 * 1024 * 1024) { // 100MB upload capacity for high-res images & layout promo videos
   return new Promise((resolve, reject) => {
     let body = '';
     let totalBytes = 0;
@@ -138,6 +138,32 @@ function validateRasterImageBytes(buffer) {
   }
 
   return null;
+}
+
+// Validate and persist an uploaded video from Base64
+function saveBase64Video(base64Data, customPrefix = 'video') {
+  const matches = base64Data.match(/^data:video\/([a-zA-Z0-9._-]+);base64,(.+)$/);
+  if (!matches) {
+    throw new Error('Invalid video format. Must be a valid Base64 video data URI (MP4, WebM, OGG, or MOV).');
+  }
+
+  let ext = matches[1].toLowerCase();
+  if (ext === 'quicktime') ext = 'mov';
+  if (!['mp4', 'webm', 'ogg', 'mov'].includes(ext)) {
+    ext = 'mp4';
+  }
+
+  const buffer = Buffer.from(matches[2], 'base64');
+  if (buffer.length > 80 * 1024 * 1024) { // 80MB per video limit
+    throw new Error('Video file size exceeds 80MB limit.');
+  }
+
+  const sanitizedPrefix = customPrefix.replace(/[^a-zA-Z0-9_-]/g, '_').substring(0, 30);
+  const filename = `${sanitizedPrefix}_${Date.now()}_${crypto.randomBytes(6).toString('hex')}.${ext}`;
+  const filepath = path.join(UPLOADS_DIR, filename);
+  fs.writeFileSync(filepath, buffer);
+
+  return `/uploads/${filename}`;
 }
 
 // Validate and persist an uploaded image from Base64
@@ -213,10 +239,12 @@ async function startServer(customPort = null) {
         facing: pl.facing,
         status: pl.status,
         areaSqft: pl.areaSqft || 0,
+        areaCents: pl.areaCents !== undefined ? pl.areaCents : '',
+        areaSqm: pl.areaSqm !== undefined ? pl.areaSqm : '',
         plotType: pl.plotType || 'Residential',
         image: pl.image || '',
         gallery: Array.isArray(pl.gallery) ? pl.gallery : [],
-        price: 'To be Negotiable'
+        price: (pl.price && String(pl.price).trim() !== '') ? pl.price : 'To be Negotiable'
       }));
       const layoutDoc = await storage.getLayoutDocument();
       const reviews = await storage.getPublishedReviews();
@@ -338,7 +366,7 @@ async function startServer(customPort = null) {
         return sendJSON(res, 401, { error: 'Access denied: Valid administrator session required.' });
       }
 
-      // --- SECURE IMAGE UPLOAD HANDLER ---
+      // --- SECURE IMAGE & VIDEO UPLOAD HANDLERS ---
       if (method === 'POST' && pathname === '/api/admin/upload-image') {
         try {
           const { fileData, prefix } = await getRequestBody(req);
@@ -346,6 +374,19 @@ async function startServer(customPort = null) {
             return sendJSON(res, 400, { error: 'Missing image payload (fileData base64 required).' });
           }
           const savedUrl = saveBase64Image(fileData, prefix || 'property');
+          return sendJSON(res, 200, { success: true, url: savedUrl });
+        } catch (uploadErr) {
+          return sendJSON(res, 400, { error: uploadErr.message });
+        }
+      }
+
+      if (method === 'POST' && pathname === '/api/admin/upload-video') {
+        try {
+          const { fileData, prefix } = await getRequestBody(req);
+          if (!fileData) {
+            return sendJSON(res, 400, { error: 'Missing video payload (fileData base64 required).' });
+          }
+          const savedUrl = saveBase64Video(fileData, prefix || 'layout_video');
           return sendJSON(res, 200, { success: true, url: savedUrl });
         } catch (uploadErr) {
           return sendJSON(res, 400, { error: uploadErr.message });
@@ -404,6 +445,8 @@ async function startServer(customPort = null) {
           layout: data.layout ? String(data.layout).trim() : "Sowbhagya Nagar Layout",
           dimension: dimensionVal,
           areaSqft: areaSqftVal,
+          areaCents: data.areaCents !== undefined ? data.areaCents : '',
+          areaSqm: data.areaSqm !== undefined ? data.areaSqm : '',
           plotType: plotTypeVal,
           facing: data.facing ? String(data.facing).trim() : "East Facing",
           price: priceVal,
@@ -440,6 +483,8 @@ async function startServer(customPort = null) {
         if (data.number !== undefined) updatePayload.number = String(data.number).trim();
         if (data.dimension !== undefined) updatePayload.dimension = String(data.dimension).trim();
         if (data.areaSqft !== undefined) updatePayload.areaSqft = parseInt(data.areaSqft, 10) || 0;
+        if (data.areaCents !== undefined) updatePayload.areaCents = data.areaCents;
+        if (data.areaSqm !== undefined) updatePayload.areaSqm = data.areaSqm;
         if (data.plotType !== undefined) updatePayload.plotType = String(data.plotType).trim();
         if (data.facing !== undefined) updatePayload.facing = String(data.facing).trim();
         if (data.status !== undefined) updatePayload.status = data.status;
@@ -505,6 +550,10 @@ async function startServer(customPort = null) {
           buildingType: data.buildingType ? String(data.buildingType).trim() : '',
           configuration: data.configuration ? String(data.configuration).trim() : '',
           carParking: data.carParking ? String(data.carParking).trim() : '',
+          uds: data.uds !== undefined ? String(data.uds).trim() : '',
+          rentPrice: data.rentPrice !== undefined ? String(data.rentPrice).trim() : '',
+          advanceAmount: data.advanceAmount !== undefined ? String(data.advanceAmount).trim() : '',
+          videoUrl: data.videoUrl ? String(data.videoUrl).trim() : '',
           floorPlanImage: data.floorPlanImage ? String(data.floorPlanImage).trim() : '',
           buildingPhotos: Array.isArray(data.buildingPhotos) ? data.buildingPhotos.filter(g => typeof g === 'string') : [],
           amenitiesPhotos: Array.isArray(data.amenitiesPhotos) ? data.amenitiesPhotos.filter(g => typeof g === 'string') : [],
@@ -784,6 +833,10 @@ async function startServer(customPort = null) {
         '.jpeg': 'image/jpeg',
         '.webp': 'image/webp',
         '.svg': 'image/svg+xml',
+        '.mp4': 'video/mp4',
+        '.webm': 'video/webm',
+        '.ogg': 'video/ogg',
+        '.mov': 'video/quicktime',
         '.xml': 'application/xml',
         '.txt': 'text/plain'
       };
