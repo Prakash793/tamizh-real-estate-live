@@ -2166,7 +2166,11 @@
           if (info.type === 'youtube' || info.type === 'instagram') {
             previewWrapper.innerHTML = `
               <div class="relative w-full aspect-video rounded-xl overflow-hidden border border-amber-500/40 bg-black mb-2">
-                <iframe src="${escapeHtml(info.embedUrl)}" class="w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <iframe src="${escapeHtml(info.embedUrl)}" class="w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center justify-between mb-2">
+                <span>Previewing live video</span>
+                <a href="${escapeHtml(currentPropVideoUrl)}" target="_blank" rel="noopener noreferrer" class="text-amber-300 hover:underline font-bold">Open video in new tab ↗</a>
               </div>
             `;
           } else {
