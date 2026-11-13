@@ -453,7 +453,17 @@ async function startServer(customPort = null) {
           status: statusVal,
           notes: notesVal,
           image: data.image ? String(data.image).trim() : '',
-          gallery: Array.isArray(data.gallery) ? data.gallery : []
+          gallery: Array.isArray(data.gallery) ? data.gallery : [],
+          buyerName: data.buyerName ? String(data.buyerName).trim() : '',
+          buyerPhone: data.buyerPhone ? String(data.buyerPhone).trim() : '',
+          totalDealAmount: data.totalDealAmount !== undefined ? String(data.totalDealAmount).trim() : '',
+          advanceAmount: data.advanceAmount !== undefined ? String(data.advanceAmount).trim() : '',
+          advanceDate: data.advanceDate ? String(data.advanceDate).trim() : '',
+          agreementAmount: data.agreementAmount !== undefined ? String(data.agreementAmount).trim() : '',
+          agreementDate: data.agreementDate ? String(data.agreementDate).trim() : '',
+          registrationAmount: data.registrationAmount !== undefined ? String(data.registrationAmount).trim() : '',
+          registrationDate: data.registrationDate ? String(data.registrationDate).trim() : '',
+          paymentNotes: data.paymentNotes ? String(data.paymentNotes).trim() : ''
         });
         return sendJSON(res, 201, { success: true, plot: newPlot });
       }
@@ -493,6 +503,16 @@ async function startServer(customPort = null) {
         if (data.layoutId !== undefined) updatePayload.layoutId = parseInt(data.layoutId, 10);
         if (data.image !== undefined) updatePayload.image = String(data.image).trim();
         if (data.gallery !== undefined) updatePayload.gallery = Array.isArray(data.gallery) ? data.gallery : [];
+        if (data.buyerName !== undefined) updatePayload.buyerName = String(data.buyerName).trim();
+        if (data.buyerPhone !== undefined) updatePayload.buyerPhone = String(data.buyerPhone).trim();
+        if (data.totalDealAmount !== undefined) updatePayload.totalDealAmount = String(data.totalDealAmount).trim();
+        if (data.advanceAmount !== undefined) updatePayload.advanceAmount = String(data.advanceAmount).trim();
+        if (data.advanceDate !== undefined) updatePayload.advanceDate = String(data.advanceDate).trim();
+        if (data.agreementAmount !== undefined) updatePayload.agreementAmount = String(data.agreementAmount).trim();
+        if (data.agreementDate !== undefined) updatePayload.agreementDate = String(data.agreementDate).trim();
+        if (data.registrationAmount !== undefined) updatePayload.registrationAmount = String(data.registrationAmount).trim();
+        if (data.registrationDate !== undefined) updatePayload.registrationDate = String(data.registrationDate).trim();
+        if (data.paymentNotes !== undefined) updatePayload.paymentNotes = String(data.paymentNotes).trim();
 
         const updated = await storage.updatePlot(id, updatePayload);
         if (!updated) return sendJSON(res, 404, { error: 'Plot not found' });
@@ -557,7 +577,17 @@ async function startServer(customPort = null) {
           floorPlanImage: data.floorPlanImage ? String(data.floorPlanImage).trim() : '',
           buildingPhotos: Array.isArray(data.buildingPhotos) ? data.buildingPhotos.filter(g => typeof g === 'string') : [],
           amenitiesPhotos: Array.isArray(data.amenitiesPhotos) ? data.amenitiesPhotos.filter(g => typeof g === 'string') : [],
-          managePlots: data.managePlots !== false
+          managePlots: data.managePlots !== false,
+          buyerName: data.buyerName ? String(data.buyerName).trim() : '',
+          buyerPhone: data.buyerPhone ? String(data.buyerPhone).trim() : '',
+          totalDealAmount: data.totalDealAmount !== undefined ? String(data.totalDealAmount).trim() : '',
+          advanceAmount: data.advanceAmount !== undefined ? String(data.advanceAmount).trim() : '',
+          advanceDate: data.advanceDate ? String(data.advanceDate).trim() : '',
+          agreementAmount: data.agreementAmount !== undefined ? String(data.agreementAmount).trim() : '',
+          agreementDate: data.agreementDate ? String(data.agreementDate).trim() : '',
+          registrationAmount: data.registrationAmount !== undefined ? String(data.registrationAmount).trim() : '',
+          registrationDate: data.registrationDate ? String(data.registrationDate).trim() : '',
+          paymentNotes: data.paymentNotes ? String(data.paymentNotes).trim() : ''
         });
         return sendJSON(res, 201, { success: true, property: newProp });
       }
@@ -817,6 +847,18 @@ async function startServer(customPort = null) {
         'X-Frame-Options': 'SAMEORIGIN'
       });
       return res.end(indexHtml);
+    }
+
+    if (pathname === '/magazine' || pathname === '/magazine.html') {
+      const magFile = path.join(PUBLIC_DIR, 'magazine.html');
+      if (fs.existsSync(magFile)) {
+        res.writeHead(200, {
+          'Content-Type': 'text/html; charset=UTF-8',
+          'X-Content-Type-Options': 'nosniff',
+          'X-Frame-Options': 'SAMEORIGIN'
+        });
+        return res.end(fs.readFileSync(magFile, 'utf8'));
+      }
     }
 
     // Static file handler (including /uploads/*, /robots.txt, /sitemap.xml)

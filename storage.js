@@ -445,6 +445,16 @@ async function getProperties() {
       delete sanitized.ownerName;
       delete sanitized.ownerPhone;
       delete sanitized.internalPrice;
+      delete sanitized.buyerName;
+      delete sanitized.buyerPhone;
+      delete sanitized.totalDealAmount;
+      delete sanitized.advanceAmount;
+      delete sanitized.advanceDate;
+      delete sanitized.agreementAmount;
+      delete sanitized.agreementDate;
+      delete sanitized.registrationAmount;
+      delete sanitized.registrationDate;
+      delete sanitized.paymentNotes;
       sanitized.price = 'To be Negotiable';
       return sanitized;
     });
