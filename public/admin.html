@@ -1036,18 +1036,18 @@
           </div>
           <p class="text-xs text-slate-400">Public price display is strictly maintained as <strong class="text-amber-300">"To be Negotiable"</strong> on all public cards, modals, and brochures.</p>
 
-          <!-- Customer Booking & Payment Milestone Tracking (For Standalone Properties / Buildings / Farmland) -->
-          <div class="mt-4 pt-4 border-t border-amber-500/20 space-y-4">
+          <!-- Customer Booking & Payment Milestone Tracking (Admin Only: Only Applicable for Building & Construction) -->
+          <div id="editPropPaymentMilestonesSection" class="hidden mt-4 pt-4 border-t border-amber-500/20 space-y-4">
             <div class="flex items-center justify-between">
               <span class="text-xs sm:text-sm font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
-                <span>💰</span> Customer Booking & Payment Milestone Tracking (Admin Only)
+                <span>💰</span> Building Construction Customer Booking & Payment Milestones
               </span>
               <span class="text-[11px] bg-emerald-500/10 text-emerald-300 px-2.5 py-0.5 rounded border border-emerald-500/30 font-mono">100% PRIVATE</span>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label class="block text-xs font-bold text-slate-300 mb-1.5">Customer / Buyer Full Name</label>
+                <label class="block text-xs font-bold text-slate-300 mb-1.5">Customer / Client Full Name</label>
                 <input type="text" id="editPropBuyerName" placeholder="e.g. K. Sundaramoorthy" class="w-full text-sm px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-amber-400">
               </div>
               <div>
@@ -1930,8 +1930,9 @@
         const ownerInfo = p.ownerName ? `${escapeHtml(p.ownerName)} ${p.ownerPhone ? `(${escapeHtml(p.ownerPhone)})` : ''}` : '<span class="text-slate-500 italic">Not set</span>';
         const privatePrice = p.internalPrice ? `<span class="text-amber-300 font-mono font-bold">${escapeHtml(p.internalPrice)}</span>` : '<span class="text-slate-500">--</span>';
 
-        // Check if property has confidential payment milestone tracking recorded
-        const hasPaymentData = !!(p.buyerName || p.totalDealAmount || p.advanceAmount || p.agreementAmount || p.registrationAmount);
+        // Payment milestone strip only applies to Building & Construction properties (other verticals track at plot level)
+        const isBldg = (p.category === 'Building & Construction' || p.category === 'Building');
+        const hasPaymentData = isBldg && !!(p.buyerName || p.totalDealAmount || p.advanceAmount || p.agreementAmount || p.registrationAmount);
         let paymentStrip = '';
         if (hasPaymentData) {
           const totDeal = parseFloat(p.totalDealAmount) || 0;
@@ -2040,9 +2041,9 @@
         document.getElementById('propEditorModalTitle').innerText = "Add New Layout / Property Record";
         document.getElementById('editPropId').value = "";
         document.getElementById('editPropTitle').value = "";
-        document.getElementById('editPropCategory').value = "Building & Construction";
+        document.getElementById('editPropCategory').value = "Layout Promotion";
         document.getElementById('editPropLocation').value = "Kayarambedu, Guduvanchery";
-        document.getElementById('editPropStatus').value = "Under Construction";
+        document.getElementById('editPropStatus').value = "Available";
         document.getElementById('editPropPubState').value = "published";
         document.getElementById('editPropClientName').value = "";
         document.getElementById('editPropOwnerName').value = "";
@@ -2507,6 +2508,16 @@
       const buildingPhotosContainer = document.getElementById('editPropBuildingPhotosContainer');
       const amenitiesContainer = document.getElementById('editPropAmenitiesContainer');
       const plotManagementContainer = document.getElementById('editPropPlotManagementContainer');
+
+      // Payment Milestones panel is ONLY for Building & Construction
+      const paymentMilestonesSec = document.getElementById('editPropPaymentMilestonesSection');
+      if (paymentMilestonesSec) {
+        if (isBuilding) {
+          paymentMilestonesSec.classList.remove('hidden');
+        } else {
+          paymentMilestonesSec.classList.add('hidden');
+        }
+      }
 
       // 1. SECTION 1 DYNAMICS
       if (sec1Heading) sec1Heading.innerText = "1. PROPERTY DETAILS";
