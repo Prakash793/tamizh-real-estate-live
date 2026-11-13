@@ -381,6 +381,104 @@
             </div>
           </div>
 
+          <!-- Plot Private Customer Booking & Payment Schedule Tracking (Admin Only) -->
+          <div class="p-5 rounded-2xl bg-gradient-to-br from-amber-950/20 via-slate-950/80 to-slate-900/90 border-2 border-amber-500/40 space-y-4 shadow-xl">
+            <div class="flex items-center justify-between flex-wrap gap-2 border-b border-slate-800 pb-3">
+              <div class="flex items-center gap-2">
+                <span class="text-xl">💰</span>
+                <div>
+                  <h5 class="text-sm font-extrabold text-amber-300 uppercase tracking-wider font-lux">
+                    Private Customer Booking & Payment Milestone Tracking
+                  </h5>
+                  <p class="text-[11px] text-slate-400">
+                    Confidential payment schedule & dates. <strong class="text-amber-400 font-bold">100% hidden from website viewers</strong> — visible only to Admin.
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700 text-xs font-mono text-slate-300">
+                  Balance: <strong id="plotCalcBalanceText" class="text-amber-400 font-bold">₹0</strong>
+                </span>
+              </div>
+            </div>
+
+            <!-- Buyer Details & Total Deal Amount -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-300 mb-1.5">Customer / Buyer Name</label>
+                <input type="text" id="plotBuyerNameInput" placeholder="e.g. Mr. K. Ramanathan" class="w-full text-sm px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:border-amber-400">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 mb-1.5">Customer Contact Number</label>
+                <input type="text" id="plotBuyerPhoneInput" placeholder="e.g. +91 98401 23456" class="w-full text-sm px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:border-amber-400">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-amber-300 mb-1.5">Total Deal Amount (₹ / $)</label>
+                <input type="number" step="any" id="plotTotalDealInput" oninput="calculatePlotPaymentBalance()" placeholder="e.g. 2500000" class="w-full text-sm px-4 py-2.5 rounded-xl bg-slate-950 border border-amber-500/50 text-amber-300 font-bold placeholder-slate-600 focus:outline-none focus:border-amber-400">
+              </div>
+            </div>
+
+            <!-- Milestone 1: Advance Payment -->
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 items-center">
+              <div class="sm:col-span-3">
+                <span class="text-xs font-extrabold text-emerald-400 block uppercase tracking-wide">1. Advance Payment</span>
+                <span class="text-[10px] text-slate-400">Token / Booking token</span>
+              </div>
+              <div class="sm:col-span-5">
+                <label class="block text-[11px] text-slate-400 mb-1">Advance Amount (₹ / $)</label>
+                <input type="number" step="any" id="plotAdvanceAmountInput" oninput="calculatePlotPaymentBalance()" placeholder="e.g. 100000" class="w-full text-xs sm:text-sm px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-emerald-300 font-bold placeholder-slate-600 focus:outline-none focus:border-emerald-400">
+              </div>
+              <div class="sm:col-span-4">
+                <label class="block text-[11px] text-slate-400 mb-1">Received Date</label>
+                <input type="date" id="plotAdvanceDateInput" class="w-full text-xs sm:text-sm px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-emerald-400">
+              </div>
+            </div>
+
+            <!-- Milestone 2: Agreement Payment -->
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 items-center">
+              <div class="sm:col-span-3">
+                <span class="text-xs font-extrabold text-blue-400 block uppercase tracking-wide">2. Agreement Payment</span>
+                <span class="text-[10px] text-slate-400">Sale Agreement stage</span>
+              </div>
+              <div class="sm:col-span-5">
+                <label class="block text-[11px] text-slate-400 mb-1">Agreement Amount (₹ / $)</label>
+                <input type="number" step="any" id="plotAgreementAmountInput" oninput="calculatePlotPaymentBalance()" placeholder="e.g. 500000" class="w-full text-xs sm:text-sm px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-blue-300 font-bold placeholder-slate-600 focus:outline-none focus:border-blue-400">
+              </div>
+              <div class="sm:col-span-4">
+                <label class="block text-[11px] text-slate-400 mb-1">Received Date</label>
+                <input type="date" id="plotAgreementDateInput" class="w-full text-xs sm:text-sm px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-blue-400">
+              </div>
+            </div>
+
+            <!-- Milestone 3: Registration Payment -->
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 items-center">
+              <div class="sm:col-span-3">
+                <span class="text-xs font-extrabold text-purple-400 block uppercase tracking-wide">3. Registration Payment</span>
+                <span class="text-[10px] text-slate-400">Sub-Registrar Patta transfer</span>
+              </div>
+              <div class="sm:col-span-5">
+                <label class="block text-[11px] text-slate-400 mb-1">Registration Amount (₹ / $)</label>
+                <input type="number" step="any" id="plotRegistrationAmountInput" oninput="calculatePlotPaymentBalance()" placeholder="e.g. 1900000" class="w-full text-xs sm:text-sm px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-purple-300 font-bold placeholder-slate-600 focus:outline-none focus:border-purple-400">
+              </div>
+              <div class="sm:col-span-4">
+                <label class="block text-[11px] text-slate-400 mb-1">Received Date</label>
+                <input type="date" id="plotRegistrationDateInput" class="w-full text-xs sm:text-sm px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-purple-400">
+              </div>
+            </div>
+
+            <!-- Transaction Notes & Auto Balance Overview -->
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center pt-1">
+              <div class="sm:col-span-8">
+                <label class="block text-xs font-bold text-slate-300 mb-1.5">Payment Remarks / Cheque / UTR / Bank Details</label>
+                <input type="text" id="plotPaymentNotesInput" placeholder="e.g. Chq #409211 HDFC Bank clearing on 15th / RTGS Ref: SBIN19283746" class="w-full text-xs sm:text-sm px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:border-amber-400">
+              </div>
+              <div class="sm:col-span-4 p-3 rounded-xl bg-slate-950 border border-amber-500/30 text-center">
+                <span class="block text-[10px] uppercase font-bold text-slate-400">Remaining Balance Due</span>
+                <span id="plotPendingBalanceBadge" class="text-base sm:text-lg font-black text-amber-300 font-mono">₹0</span>
+              </div>
+            </div>
+          </div>
+
           <!-- Plot Multiple Photos & Multi-Angle Gallery Upload -->
           <div class="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-3">
             <div class="flex items-center justify-between flex-wrap gap-2">
@@ -924,11 +1022,11 @@
 
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1.5">Landowner / Customer Contact Name</label>
+              <label class="block text-xs font-bold text-slate-300 mb-1.5">Landowner / Primary Contact Name</label>
               <input type="text" id="editPropOwnerName" placeholder="e.g. Thiru. Ramanathan" class="w-full text-sm px-4 py-2.5 sm:py-3 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-amber-400">
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1.5">Contact Phone / WhatsApp</label>
+              <label class="block text-xs font-bold text-slate-300 mb-1.5">Landowner Phone / WhatsApp</label>
               <input type="text" id="editPropOwnerPhone" placeholder="e.g. +91 98400 12345" class="w-full text-sm px-4 py-2.5 sm:py-3 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-amber-400">
             </div>
             <div>
@@ -937,6 +1035,97 @@
             </div>
           </div>
           <p class="text-xs text-slate-400">Public price display is strictly maintained as <strong class="text-amber-300">"To be Negotiable"</strong> on all public cards, modals, and brochures.</p>
+
+          <!-- Customer Booking & Payment Milestone Tracking (For Standalone Properties / Buildings / Farmland) -->
+          <div class="mt-4 pt-4 border-t border-amber-500/20 space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-xs sm:text-sm font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                <span>💰</span> Customer Booking & Payment Milestone Tracking (Admin Only)
+              </span>
+              <span class="text-[11px] bg-emerald-500/10 text-emerald-300 px-2.5 py-0.5 rounded border border-emerald-500/30 font-mono">100% PRIVATE</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-300 mb-1.5">Customer / Buyer Full Name</label>
+                <input type="text" id="editPropBuyerName" placeholder="e.g. K. Sundaramoorthy" class="w-full text-sm px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-amber-400">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 mb-1.5">Customer Contact Phone / WhatsApp</label>
+                <input type="text" id="editPropBuyerPhone" placeholder="e.g. +91 94440 98765" class="w-full text-sm px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-amber-400">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-amber-300 mb-1.5">Total Deal Agreed Amount (₹)</label>
+                <input type="number" step="any" id="editPropTotalDeal" oninput="calculatePropPaymentBalance()" placeholder="e.g. 5500000" class="w-full text-sm px-4 py-2.5 rounded-xl bg-slate-950 border border-amber-500/50 text-amber-300 font-mono font-bold focus:outline-none focus:border-amber-400">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-emerald-400 mb-1.5">Total Received so far (₹)</label>
+                <input type="text" id="editPropTotalReceived" readonly placeholder="₹0" class="w-full text-sm px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-emerald-400 font-mono font-bold cursor-not-allowed">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-rose-400 mb-1.5">Balance Pending / Receivable (₹)</label>
+                <input type="text" id="editPropBalanceDue" readonly placeholder="₹0" class="w-full text-sm px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-rose-400 font-mono font-bold cursor-not-allowed">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1">
+              <!-- Advance Payment -->
+              <div class="p-3 rounded-xl bg-slate-950/70 border border-slate-800 space-y-2">
+                <div class="flex items-center justify-between text-xs font-bold text-slate-200">
+                  <span>1. Advance Payment</span>
+                  <span class="text-[10px] text-amber-400 font-mono">Token</span>
+                </div>
+                <div>
+                  <label class="block text-[11px] text-slate-400 mb-1">Amount (₹)</label>
+                  <input type="number" step="any" id="editPropAdvanceAmount" oninput="calculatePropPaymentBalance()" placeholder="e.g. 100000" class="w-full text-xs px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white font-mono focus:outline-none focus:border-amber-400">
+                </div>
+                <div>
+                  <label class="block text-[11px] text-slate-400 mb-1">Received Date</label>
+                  <input type="date" id="editPropAdvanceDate" class="w-full text-xs px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-400">
+                </div>
+              </div>
+
+              <!-- Agreement Payment -->
+              <div class="p-3 rounded-xl bg-slate-950/70 border border-slate-800 space-y-2">
+                <div class="flex items-center justify-between text-xs font-bold text-slate-200">
+                  <span>2. Agreement Payment</span>
+                  <span class="text-[10px] text-sky-400 font-mono">Sale Agmt</span>
+                </div>
+                <div>
+                  <label class="block text-[11px] text-slate-400 mb-1">Amount (₹)</label>
+                  <input type="number" step="any" id="editPropAgreementAmount" oninput="calculatePropPaymentBalance()" placeholder="e.g. 500000" class="w-full text-xs px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white font-mono focus:outline-none focus:border-amber-400">
+                </div>
+                <div>
+                  <label class="block text-[11px] text-slate-400 mb-1">Received Date</label>
+                  <input type="date" id="editPropAgreementDate" class="w-full text-xs px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-400">
+                </div>
+              </div>
+
+              <!-- Registration Payment -->
+              <div class="p-3 rounded-xl bg-slate-950/70 border border-slate-800 space-y-2">
+                <div class="flex items-center justify-between text-xs font-bold text-slate-200">
+                  <span>3. Registration Payment</span>
+                  <span class="text-[10px] text-emerald-400 font-mono">Final SRO</span>
+                </div>
+                <div>
+                  <label class="block text-[11px] text-slate-400 mb-1">Amount (₹)</label>
+                  <input type="number" step="any" id="editPropRegistrationAmount" oninput="calculatePropPaymentBalance()" placeholder="e.g. 1500000" class="w-full text-xs px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white font-mono focus:outline-none focus:border-amber-400">
+                </div>
+                <div>
+                  <label class="block text-[11px] text-slate-400 mb-1">Received Date</label>
+                  <input type="date" id="editPropRegistrationDate" class="w-full text-xs px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-400">
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1.5">Payment Remarks / Cheque No / Bank Transaction Notes</label>
+              <textarea id="editPropPaymentNotes" rows="2" placeholder="e.g. Advance paid via GPay on 12/10/2026. Agreement RTGS HDFC Bank Chq #481021 cleared. Balance due upon deed registration at Guduvanchery SRO." class="w-full text-xs px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-amber-400"></textarea>
+            </div>
+          </div>
         </div>
 
         <!-- Specifications & Approvals Section -->
@@ -1741,10 +1930,31 @@
         const ownerInfo = p.ownerName ? `${escapeHtml(p.ownerName)} ${p.ownerPhone ? `(${escapeHtml(p.ownerPhone)})` : ''}` : '<span class="text-slate-500 italic">Not set</span>';
         const privatePrice = p.internalPrice ? `<span class="text-amber-300 font-mono font-bold">${escapeHtml(p.internalPrice)}</span>` : '<span class="text-slate-500">--</span>';
 
+        // Check if property has confidential payment milestone tracking recorded
+        const hasPaymentData = !!(p.buyerName || p.totalDealAmount || p.advanceAmount || p.agreementAmount || p.registrationAmount);
+        let paymentStrip = '';
+        if (hasPaymentData) {
+          const totDeal = parseFloat(p.totalDealAmount) || 0;
+          const adv = parseFloat(p.advanceAmount) || 0;
+          const agr = parseFloat(p.agreementAmount) || 0;
+          const reg = parseFloat(p.registrationAmount) || 0;
+          const rcvd = adv + agr + reg;
+          const bal = totDeal > 0 ? (totDeal - rcvd) : 0;
+          paymentStrip = `
+            <div class="mt-2 pt-2 border-t border-slate-800/80 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] bg-amber-950/20 px-3 py-1.5 rounded-lg border border-amber-500/20">
+              <span class="text-amber-400 font-bold flex items-center gap-1">💰 <span>Payment Milestone:</span></span>
+              ${p.buyerName ? `<span>Buyer: <strong class="text-white">${escapeHtml(p.buyerName)}</strong></span>` : ''}
+              ${totDeal > 0 ? `<span>Deal: <strong class="text-amber-300 font-mono">₹${totDeal.toLocaleString('en-IN')}</strong></span>` : ''}
+              <span>Received: <strong class="text-emerald-400 font-mono">₹${rcvd.toLocaleString('en-IN')}</strong></span>
+              ${totDeal > 0 ? `<span>Balance: <strong class="${bal <= 0 ? 'text-emerald-400' : 'text-rose-400'} font-mono">${bal <= 0 ? 'PAID ✓' : '₹' + bal.toLocaleString('en-IN')}</strong></span>` : ''}
+            </div>
+          `;
+        }
+
         card.innerHTML = `
           <div class="flex items-start sm:items-center gap-4 sm:gap-5 w-full lg:w-auto">
             <img src="${escapeHtml(p.image)}" class="w-24 h-20 sm:w-28 sm:h-22 rounded-xl object-cover border border-slate-700 bg-slate-950 flex-shrink-0 shadow">
-            <div class="space-y-1.5">
+            <div class="space-y-1.5 flex-1">
               <div class="flex flex-wrap items-center gap-2 sm:gap-2.5">
                 <span class="font-mono text-xs bg-slate-800 text-slate-300 font-bold px-2 py-0.5 rounded-md">ID #${p.id}</span>
                 <span class="font-bold text-white text-base sm:text-lg">${escapeHtml(p.title)}</span>
@@ -1760,6 +1970,7 @@
                 <span>🔒 Private Asking: <strong class="text-slate-200">${privatePrice}</strong></span>
                 ${p.sanctionNumber ? `<span>DTCP: <strong class="text-slate-200">${escapeHtml(p.sanctionNumber)}</strong></span>` : ''}
               </div>
+              ${paymentStrip}
             </div>
           </div>
 
@@ -1778,6 +1989,9 @@
             </button>
             <button onclick="manageLayoutPlots(${p.id})" class="px-3.5 py-2 sm:py-2.5 rounded-xl bg-teal-950/80 hover:bg-teal-900/80 text-teal-300 border border-teal-500/40 font-bold text-xs sm:text-sm transition" title="Manage Plots for this layout">
               📐 Plots
+            </button>
+            <button onclick="downloadPropertyStatement(${p.id})" class="px-3.5 py-2 sm:py-2.5 rounded-xl bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-amber-300 border border-amber-500/40 font-bold text-xs sm:text-sm flex items-center gap-1.5 transition" title="Download Property Details & Accounts Statement">
+              📥 Download
             </button>
             <button onclick="deleteAdminProperty(${p.id})" class="px-3 py-2 sm:py-2.5 rounded-xl bg-rose-600/20 text-rose-300 hover:bg-rose-600/40 border border-rose-500/40 font-bold text-xs sm:text-sm transition" title="Delete layout & associated plots">
               ✕
@@ -1863,6 +2077,19 @@
         const fpPrev = document.getElementById('editPropFloorPlanPreview');
         if (fpPrev) fpPrev.src = "";
         removePropVideo();
+
+        // Reset payment milestone fields
+        document.getElementById('editPropBuyerName').value = "";
+        document.getElementById('editPropBuyerPhone').value = "";
+        document.getElementById('editPropTotalDeal').value = "";
+        document.getElementById('editPropAdvanceAmount').value = "";
+        document.getElementById('editPropAdvanceDate').value = "";
+        document.getElementById('editPropAgreementAmount').value = "";
+        document.getElementById('editPropAgreementDate').value = "";
+        document.getElementById('editPropRegistrationAmount').value = "";
+        document.getElementById('editPropRegistrationDate').value = "";
+        document.getElementById('editPropPaymentNotes').value = "";
+        calculatePropPaymentBalance();
       } else {
         // Edit Mode
         const prop = cachedProperties.find(p => p.id === propId);
@@ -1893,6 +2120,19 @@
         document.getElementById('editPropTotalLandAreaUnit').value = prop.totalLandAreaUnit || "acres";
         document.getElementById('editPropBuiltUpArea').value = prop.builtUpArea || "";
         document.getElementById('editPropBuiltUpAreaUnit').value = prop.builtUpAreaUnit || "sq.ft";
+
+        // Payment milestone fields for properties
+        document.getElementById('editPropBuyerName').value = prop.buyerName || "";
+        document.getElementById('editPropBuyerPhone').value = prop.buyerPhone || "";
+        document.getElementById('editPropTotalDeal').value = prop.totalDealAmount || "";
+        document.getElementById('editPropAdvanceAmount').value = prop.advanceAmount || "";
+        document.getElementById('editPropAdvanceDate').value = prop.advanceDate || "";
+        document.getElementById('editPropAgreementAmount').value = prop.agreementAmount || "";
+        document.getElementById('editPropAgreementDate').value = prop.agreementDate || "";
+        document.getElementById('editPropRegistrationAmount').value = prop.registrationAmount || "";
+        document.getElementById('editPropRegistrationDate').value = prop.registrationDate || "";
+        document.getElementById('editPropPaymentNotes').value = prop.paymentNotes || "";
+        calculatePropPaymentBalance();
         
         // Building & Construction specific fields
         document.getElementById('editPropBuildingBuiltUpArea').value = prop.builtUpArea || "";
@@ -2608,17 +2848,33 @@
           finalVideoUrl = videoJson.url;
         }
 
+        const buyerName = document.getElementById('editPropBuyerName') ? document.getElementById('editPropBuyerName').value.trim() : '';
+        const buyerPhone = document.getElementById('editPropBuyerPhone') ? document.getElementById('editPropBuyerPhone').value.trim() : '';
+        const totalDealAmount = document.getElementById('editPropTotalDeal') ? document.getElementById('editPropTotalDeal').value.trim() : '';
+        const propAdvAmount = document.getElementById('editPropAdvanceAmount') ? document.getElementById('editPropAdvanceAmount').value.trim() : '';
+        const advanceDate = document.getElementById('editPropAdvanceDate') ? document.getElementById('editPropAdvanceDate').value : '';
+        const agreementAmount = document.getElementById('editPropAgreementAmount') ? document.getElementById('editPropAgreementAmount').value.trim() : '';
+        const agreementDate = document.getElementById('editPropAgreementDate') ? document.getElementById('editPropAgreementDate').value : '';
+        const registrationAmount = document.getElementById('editPropRegistrationAmount') ? document.getElementById('editPropRegistrationAmount').value.trim() : '';
+        const registrationDate = document.getElementById('editPropRegistrationDate') ? document.getElementById('editPropRegistrationDate').value : '';
+        const paymentNotes = document.getElementById('editPropPaymentNotes') ? document.getElementById('editPropPaymentNotes').value.trim() : '';
+
         const payload = {
           title, category, location, status, isPublished, isArchived,
           ownerName, ownerPhone, internalPrice, sanctionNumber, plotCount, specs, desc,
           clientName, builtUpArea, builtUpAreaUnit, grossArea, grossAreaUnit,
           buildingType, configuration, carParking, uds,
-          rentPrice, advanceAmount,
+          rentPrice,
           videoUrl: finalVideoUrl,
           totalLandArea, totalLandAreaUnit, managePlots,
           gallery: finalGallery,
           buildingPhotos: finalBuildingPhotos,
-          amenitiesPhotos: finalAmenitiesPhotos
+          amenitiesPhotos: finalAmenitiesPhotos,
+          buyerName, buyerPhone, totalDealAmount,
+          advanceAmount: propAdvAmount, advanceDate,
+          agreementAmount, agreementDate,
+          registrationAmount, registrationDate,
+          paymentNotes
         };
         if (imageUrl) payload.image = imageUrl;
         if (masterplanUrl) payload.masterplanImage = masterplanUrl;
@@ -2756,6 +3012,43 @@
       }
     }
 
+    // Dynamic Balance Calculation for Plot Payment Schedule
+    function calculatePlotPaymentBalance() {
+      const totalDeal = parseFloat(document.getElementById('plotTotalDealInput').value) || 0;
+      const advance = parseFloat(document.getElementById('plotAdvanceAmountInput').value) || 0;
+      const agreement = parseFloat(document.getElementById('plotAgreementAmountInput').value) || 0;
+      const registration = parseFloat(document.getElementById('plotRegistrationAmountInput').value) || 0;
+
+      const totalReceived = advance + agreement + registration;
+      const balance = totalDeal > 0 ? (totalDeal - totalReceived) : 0;
+
+      const balanceBadge = document.getElementById('plotPendingBalanceBadge');
+      const balanceText = document.getElementById('plotCalcBalanceText');
+
+      const formatCurrency = (amt) => {
+        if (amt === 0) return '₹0';
+        return '₹' + amt.toLocaleString('en-IN');
+      };
+
+      const displayText = totalDeal > 0 ? formatCurrency(balance) : '₹0';
+
+      if (balanceBadge) {
+        balanceBadge.innerText = displayText;
+        if (totalDeal > 0 && balance <= 0) {
+          balanceBadge.className = "text-base sm:text-lg font-black text-emerald-400 font-mono";
+          balanceBadge.innerText = `${displayText} (Fully Paid ✓)`;
+        } else if (totalDeal > 0 && balance > 0) {
+          balanceBadge.className = "text-base sm:text-lg font-black text-amber-300 font-mono";
+        } else {
+          balanceBadge.className = "text-base sm:text-lg font-black text-slate-400 font-mono";
+        }
+      }
+      if (balanceText) {
+        balanceText.innerText = displayText;
+        balanceText.className = (totalDeal > 0 && balance <= 0) ? "text-emerald-400 font-bold" : "text-amber-400 font-bold";
+      }
+    }
+
     function renderPlotLayoutSelector() {
       const selector = document.getElementById('plotLayoutSelector');
       if (!selector) return;
@@ -2867,17 +3160,66 @@
         const notesStr = plot.notes ? ` • <span class="text-amber-300/80 font-mono italic">Note: ${escapeHtml(plot.notes)}</span>` : '';
         const plotThumbHtml = plot.image ? `<img src="${plot.image}" class="w-10 h-10 rounded-lg object-cover border border-amber-400/40 flex-shrink-0" alt="Plot photo">` : '';
 
+        // Compute Financial Payment Status
+        const totDeal = parseFloat(plot.totalDealAmount) || 0;
+        const advAmt = parseFloat(plot.advanceAmount) || 0;
+        const agrAmt = parseFloat(plot.agreementAmount) || 0;
+        const regAmt = parseFloat(plot.registrationAmount) || 0;
+        const totRcvd = advAmt + agrAmt + regAmt;
+        const balDue = totDeal > 0 ? (totDeal - totRcvd) : 0;
+
+        let paymentStripHtml = '';
+        if (totDeal > 0 || advAmt > 0 || agrAmt > 0 || regAmt > 0 || plot.buyerName) {
+          const buyerLabel = plot.buyerName ? `Buyer: <strong class="text-white">${escapeHtml(plot.buyerName)}</strong> ${plot.buyerPhone ? `(${escapeHtml(plot.buyerPhone)})` : ''}` : 'Customer Not Set';
+          const balClass = balDue <= 0 && totDeal > 0 ? 'text-emerald-400 font-black' : 'text-amber-300 font-black';
+          const balStatusText = (totDeal > 0 && balDue <= 0) ? '₹0 (Fully Paid ✓)' : ('₹' + balDue.toLocaleString('en-IN'));
+
+          paymentStripHtml = `
+            <div class="mt-2 p-2.5 rounded-xl bg-slate-950/90 border border-amber-500/30 text-xs space-y-1.5 w-full">
+              <div class="flex items-center justify-between flex-wrap gap-2">
+                <span class="text-amber-300 font-extrabold flex items-center gap-1.5 font-lux">
+                  <span>💳</span> ${buyerLabel}
+                </span>
+                <span class="font-mono text-[11px] px-2 py-0.5 rounded bg-slate-900 border border-slate-700">
+                  Total Deal: <strong class="text-amber-300 font-bold">${totDeal > 0 ? '₹' + totDeal.toLocaleString('en-IN') : '--'}</strong>
+                  • Recv: <strong class="text-emerald-400 font-bold">₹${totRcvd.toLocaleString('en-IN')}</strong>
+                  • Bal Due: <strong class="${balClass}">${balStatusText}</strong>
+                </span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] pt-1 border-t border-slate-800 text-slate-300">
+                <div class="bg-slate-900/60 p-1.5 rounded border border-slate-800">
+                  <span class="text-emerald-400 font-bold block">1. Advance</span>
+                  <span>${advAmt > 0 ? '₹' + advAmt.toLocaleString('en-IN') : '--'}</span>
+                  ${plot.advanceDate ? `<span class="text-slate-500 block text-[10px]">${escapeHtml(plot.advanceDate)}</span>` : ''}
+                </div>
+                <div class="bg-slate-900/60 p-1.5 rounded border border-slate-800">
+                  <span class="text-blue-400 font-bold block">2. Agreement</span>
+                  <span>${agrAmt > 0 ? '₹' + agrAmt.toLocaleString('en-IN') : '--'}</span>
+                  ${plot.agreementDate ? `<span class="text-slate-500 block text-[10px]">${escapeHtml(plot.agreementDate)}</span>` : ''}
+                </div>
+                <div class="bg-slate-900/60 p-1.5 rounded border border-slate-800">
+                  <span class="text-purple-400 font-bold block">3. Registration</span>
+                  <span>${regAmt > 0 ? '₹' + regAmt.toLocaleString('en-IN') : '--'}</span>
+                  ${plot.registrationDate ? `<span class="text-slate-500 block text-[10px]">${escapeHtml(plot.registrationDate)}</span>` : ''}
+                </div>
+              </div>
+              ${plot.paymentNotes ? `<div class="text-[11px] text-slate-400 pt-0.5"><span class="text-amber-400 font-semibold">Payment Remarks:</span> ${escapeHtml(plot.paymentNotes)}</div>` : ''}
+            </div>
+          `;
+        }
+
         const row = document.createElement('div');
         row.className = "p-5 sm:p-6 rounded-2xl bg-slate-900/90 border border-slate-700/80 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-sm shadow-md";
         row.innerHTML = `
-          <div class="flex items-start gap-4 flex-1">
+          <div class="flex items-start gap-4 flex-1 w-full">
             ${plotThumbHtml ? plotThumbHtml.replace('w-10 h-10', 'w-14 h-14') : ''}
-            <div class="space-y-1.5 flex-1">
+            <div class="space-y-1.5 flex-1 w-full">
               <div class="flex items-center gap-2.5 flex-wrap">
                 <span class="font-bold text-white text-base sm:text-lg">${escapeHtml(plot.number)}</span>
                 <span class="text-xs font-bold px-2.5 py-1 rounded-lg tracking-wide uppercase ${statusBadgeClass}">${plotSt}</span>
                 ${!isFarmLayout ? `<span class="text-xs bg-slate-800 text-amber-300 font-bold px-2.5 py-1 rounded-lg border border-slate-700">${escapeHtml(plot.plotType || 'Residential')}</span>` : ''}
                 ${plot.image ? '<span class="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-bold">📷 Photo</span>' : ''}
+                ${totDeal > 0 ? `<span class="text-xs bg-amber-500/20 text-amber-300 px-2.5 py-0.5 rounded font-mono font-bold border border-amber-500/30">Deal: ₹${totDeal.toLocaleString('en-IN')}</span>` : ''}
               </div>
               <div class="text-xs sm:text-sm text-slate-300">
                 Area: <strong class="text-white">${escapeHtml(areaStr)}</strong>${escapeHtml(dimStr)} • Facing: <strong>${escapeHtml(plot.facing || 'East')}</strong> • Public Rate: <span class="text-amber-400 font-bold">${escapeHtml(plot.price || 'To be Negotiable')}</span>
@@ -2885,10 +3227,11 @@
               <div class="text-xs text-slate-400">
                 Layout: <strong class="text-slate-300">${escapeHtml(currentLayoutName)}</strong> (ID #${selectedPlotLayoutId})${notesStr}
               </div>
+              ${paymentStripHtml}
             </div>
           </div>
 
-          <div class="flex items-center gap-2.5 flex-wrap self-end md:self-auto">
+          <div class="flex items-center gap-2.5 flex-wrap self-end md:self-auto shrink-0">
             <!-- Quick Availability Selector -->
             <select onchange="updatePlotStatus(${plot.id}, this.value)" class="bg-slate-800 text-xs sm:text-sm px-3.5 py-2 sm:py-2.5 rounded-xl border border-slate-600 text-white font-bold cursor-pointer focus:outline-none focus:border-amber-400">
               <option value="Available" ${plotSt === 'Available' ? 'selected' : ''}>Available</option>
@@ -2897,8 +3240,13 @@
             </select>
 
             <!-- Edit Button -->
-            <button onclick="editPlotInForm(${plot.id})" class="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/40 font-bold text-xs sm:text-sm transition flex items-center gap-1.5">
+            <button onclick="editPlotInForm(${plot.id})" class="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/40 font-bold text-xs sm:text-sm transition flex items-center gap-1.5" title="Edit Plot & Payments">
               ✏️ Edit
+            </button>
+
+            <!-- 1-Click Statement Download Button -->
+            <button onclick="downloadPlotStatement(${plot.id})" class="px-3 py-2 sm:py-2.5 rounded-xl bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-amber-300 border border-amber-500/40 font-bold text-xs sm:text-sm flex items-center gap-1.5 transition shadow" title="Download Official Payment & Plot Statement">
+              📥 Receipt
             </button>
 
             <!-- Delete Button -->
@@ -3015,6 +3363,19 @@
       }
       document.getElementById('plotNotesInput').value = plot.notes || '';
 
+      // Customer Booking & Payment Schedule Tracking Fields
+      document.getElementById('plotBuyerNameInput').value = plot.buyerName || '';
+      document.getElementById('plotBuyerPhoneInput').value = plot.buyerPhone || '';
+      document.getElementById('plotTotalDealInput').value = (plot.totalDealAmount !== undefined) ? plot.totalDealAmount : '';
+      document.getElementById('plotAdvanceAmountInput').value = (plot.advanceAmount !== undefined) ? plot.advanceAmount : '';
+      document.getElementById('plotAdvanceDateInput').value = plot.advanceDate || '';
+      document.getElementById('plotAgreementAmountInput').value = (plot.agreementAmount !== undefined) ? plot.agreementAmount : '';
+      document.getElementById('plotAgreementDateInput').value = plot.agreementDate || '';
+      document.getElementById('plotRegistrationAmountInput').value = (plot.registrationAmount !== undefined) ? plot.registrationAmount : '';
+      document.getElementById('plotRegistrationDateInput').value = plot.registrationDate || '';
+      document.getElementById('plotPaymentNotesInput').value = plot.paymentNotes || '';
+      calculatePlotPaymentBalance();
+
       // Initialize Plot Gallery (aggregating image & gallery)
       currentPlotGallery = [];
       if (plot.image && String(plot.image).trim() !== '') {
@@ -3054,6 +3415,19 @@
         priceInput.classList.add('hidden');
       }
       document.getElementById('plotNotesInput').value = '';
+
+      // Reset payment tracking fields
+      document.getElementById('plotBuyerNameInput').value = '';
+      document.getElementById('plotBuyerPhoneInput').value = '';
+      document.getElementById('plotTotalDealInput').value = '';
+      document.getElementById('plotAdvanceAmountInput').value = '';
+      document.getElementById('plotAdvanceDateInput').value = '';
+      document.getElementById('plotAgreementAmountInput').value = '';
+      document.getElementById('plotAgreementDateInput').value = '';
+      document.getElementById('plotRegistrationAmountInput').value = '';
+      document.getElementById('plotRegistrationDateInput').value = '';
+      document.getElementById('plotPaymentNotesInput').value = '';
+      calculatePlotPaymentBalance();
 
       currentPlotGallery = [];
       renderPlotGalleryPreviews();
@@ -3100,6 +3474,18 @@
       const finalPrice = (priceMode === 'custom' && customPriceVal) ? customPriceVal : 'To be Negotiable';
       const notes = document.getElementById('plotNotesInput').value.trim();
 
+      // Customer Booking & Payment Breakdown
+      const buyerName = document.getElementById('plotBuyerNameInput').value.trim();
+      const buyerPhone = document.getElementById('plotBuyerPhoneInput').value.trim();
+      const totalDealAmount = document.getElementById('plotTotalDealInput').value.trim();
+      const advanceAmount = document.getElementById('plotAdvanceAmountInput').value.trim();
+      const advanceDate = document.getElementById('plotAdvanceDateInput').value;
+      const agreementAmount = document.getElementById('plotAgreementAmountInput').value.trim();
+      const agreementDate = document.getElementById('plotAgreementDateInput').value;
+      const registrationAmount = document.getElementById('plotRegistrationAmountInput').value.trim();
+      const registrationDate = document.getElementById('plotRegistrationDateInput').value;
+      const paymentNotes = document.getElementById('plotPaymentNotesInput').value.trim();
+
       if (!number) {
         alert("Plot Number is required (e.g. Plot #12).");
         return;
@@ -3128,7 +3514,17 @@
         plotType,
         status: (status === 'Active' ? 'Available' : status),
         notes,
-        price: finalPrice
+        price: finalPrice,
+        buyerName,
+        buyerPhone,
+        totalDealAmount,
+        advanceAmount,
+        advanceDate,
+        agreementAmount,
+        agreementDate,
+        registrationAmount,
+        registrationDate,
+        paymentNotes
       };
 
       const saveBtn = document.getElementById('savePlotBtn');
@@ -4472,6 +4868,601 @@
       setTimeout(() => {
         if (alertBox) alertBox.classList.add('hidden');
       }, 5000);
+    }
+
+    // ----------------------------------------------------
+    // ONE-CLICK DOWNLOAD / PRINT STATEMENT (PLOT & PROPERTY)
+    // ----------------------------------------------------
+    function calculatePropPaymentBalance() {
+      const deal = parseFloat(document.getElementById('editPropTotalDeal') ? document.getElementById('editPropTotalDeal').value : 0) || 0;
+      const adv = parseFloat(document.getElementById('editPropAdvanceAmount') ? document.getElementById('editPropAdvanceAmount').value : 0) || 0;
+      const agr = parseFloat(document.getElementById('editPropAgreementAmount') ? document.getElementById('editPropAgreementAmount').value : 0) || 0;
+      const reg = parseFloat(document.getElementById('editPropRegistrationAmount') ? document.getElementById('editPropRegistrationAmount').value : 0) || 0;
+      const totalRcvd = adv + agr + reg;
+      const bal = deal > 0 ? (deal - totalRcvd) : 0;
+
+      const rcvdEl = document.getElementById('editPropTotalReceived');
+      const balEl = document.getElementById('editPropBalanceDue');
+      if (rcvdEl) rcvdEl.value = '₹' + totalRcvd.toLocaleString('en-IN');
+      if (balEl) balEl.value = deal > 0 ? (bal <= 0 ? 'PAID IN FULL ✓' : '₹' + bal.toLocaleString('en-IN')) : '₹0';
+    }
+
+    function downloadPlotStatement(plotId) {
+      const plot = cachedPlots.find(p => p.id === plotId);
+      if (!plot) return;
+
+      const currentLayout = cachedProperties.find(p => p.id === (plot.layoutId || selectedPlotLayoutId));
+      const layoutName = currentLayout ? currentLayout.title : (plot.layout || "Tamizh Real Estate Layout");
+      const layoutLocation = currentLayout ? currentLayout.location : "Kayarambedu, Guduvanchery, Chennai";
+
+      const totDeal = parseFloat(plot.totalDealAmount) || 0;
+      const advAmt = parseFloat(plot.advanceAmount) || 0;
+      const agrAmt = parseFloat(plot.agreementAmount) || 0;
+      const regAmt = parseFloat(plot.registrationAmount) || 0;
+      const totRcvd = advAmt + agrAmt + regAmt;
+      const balDue = totDeal > 0 ? (totDeal - totRcvd) : 0;
+
+      const fmt = (n) => n > 0 ? '₹' + n.toLocaleString('en-IN') : '₹0';
+      const fmtDate = (d) => d ? d : 'Pending / Not Recorded';
+
+      const printHtml = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Plot Statement - ${escapeHtml(plot.number)} - ${escapeHtml(layoutName)}</title>
+          <style>
+            @media print {
+              @page { size: A4 portrait; margin: 15mm; }
+              body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            }
+            body {
+              font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+              color: #0f172a;
+              background: #ffffff;
+              margin: 0;
+              padding: 24px;
+              line-height: 1.5;
+            }
+            .header {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              border-bottom: 3px solid #b45309;
+              padding-bottom: 14px;
+              margin-bottom: 20px;
+            }
+            .logo-wrap { display: flex; align-items: center; gap: 14px; }
+            .logo-img { width: 68px; height: 68px; object-fit: contain; }
+            .company-name { font-size: 22px; font-weight: 900; color: #78350f; letter-spacing: 0.5px; margin: 0; }
+            .company-sub { font-size: 12px; color: #475569; margin: 2px 0 0 0; }
+            .badge {
+              display: inline-block;
+              padding: 4px 12px;
+              background: #fef3c7;
+              border: 1px solid #d97706;
+              border-radius: 20px;
+              font-size: 11px;
+              font-weight: 800;
+              color: #92400e;
+              text-transform: uppercase;
+            }
+            .title-box {
+              background: #f8fafc;
+              border: 1.5px solid #cbd5e1;
+              border-radius: 12px;
+              padding: 14px 18px;
+              margin-bottom: 18px;
+            }
+            .section-title {
+              font-size: 13px;
+              font-weight: 800;
+              text-transform: uppercase;
+              color: #b45309;
+              border-bottom: 1.5px solid #e2e8f0;
+              padding-bottom: 4px;
+              margin: 18px 0 10px 0;
+            }
+            table { width: 100%; border-collapse: collapse; margin-top: 6px; }
+            th, td {
+              padding: 8px 12px;
+              border: 1px solid #cbd5e1;
+              font-size: 12px;
+              text-align: left;
+            }
+            th { background: #f1f5f9; font-weight: 700; color: #334155; }
+            .amount { font-family: monospace; font-weight: 700; text-align: right; }
+            .total-row { background: #fef3c7; font-weight: 800; font-size: 13px; }
+            .balance-row { background: #fee2e2; font-weight: 900; font-size: 13px; color: #991b1b; }
+            .paid-row { background: #dcfce7; font-weight: 900; font-size: 13px; color: #166534; }
+            .notes-box {
+              background: #f8fafc;
+              border-left: 4px solid #f59e0b;
+              padding: 10px 14px;
+              font-size: 11.5px;
+              margin-top: 14px;
+              color: #334155;
+            }
+            .footer-sig {
+              margin-top: 40px;
+              display: flex;
+              justify-content: space-between;
+              padding-top: 24px;
+              font-size: 12px;
+            }
+            .sig-line { width: 180px; border-top: 1.5px solid #0f172a; text-align: center; padding-top: 6px; font-weight: bold; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="logo-wrap">
+              <img src="/logo.png" class="logo-img" alt="Logo" onerror="this.style.display='none'">
+              <div>
+                <h1 class="company-name">TAMIZH REAL ESTATE</h1>
+                <p class="company-sub">No.01, Sowbhagya Nagar, Nellikuppam Road, Kayarambedu, Guduvanchery, Chennai - 603202</p>
+                <p class="company-sub">Phone / WhatsApp: +91 98406 15219 • Founder: Mr. K. Kulasekaran (25+ Yrs Exp)</p>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <span class="badge">Official Office Record</span>
+              <p style="font-size: 11px; color: #64748b; margin: 4px 0 0 0;">Statement Date: ${new Date().toLocaleDateString('en-IN')}</p>
+            </div>
+          </div>
+
+          <div class="title-box">
+            <table style="border: none;">
+              <tr style="background: transparent;"><td style="border: none; padding: 2px 0;"><strong>Layout / Nagar:</strong></td><td style="border: none; padding: 2px 0; color: #b45309; font-weight: 800; font-size: 14px;">${escapeHtml(layoutName)}</td><td style="border: none; padding: 2px 0;"><strong>Plot Number:</strong></td><td style="border: none; padding: 2px 0; font-weight: 800; font-size: 14px; color: #047857;">${escapeHtml(plot.number)}</td></tr>
+              <tr style="background: transparent;"><td style="border: none; padding: 2px 0;"><strong>Locality:</strong></td><td style="border: none; padding: 2px 0;">${escapeHtml(layoutLocation)}</td><td style="border: none; padding: 2px 0;"><strong>Plot Extent / Area:</strong></td><td style="border: none; padding: 2px 0;">${escapeHtml(plot.areaSqft ? plot.areaSqft + ' Sq.Ft' : (plot.dimension || 'Standard'))} (${escapeHtml(plot.facing || 'East')})</td></tr>
+              <tr style="background: transparent;"><td style="border: none; padding: 2px 0;"><strong>Plot Status:</strong></td><td style="border: none; padding: 2px 0;"><strong>${escapeHtml(plot.status)}</strong></td><td style="border: none; padding: 2px 0;"><strong>Plot Type:</strong></td><td style="border: none; padding: 2px 0;">${escapeHtml(plot.plotType || 'Residential')}</td></tr>
+            </table>
+          </div>
+
+          <div class="section-title">Customer / Buyer Particulars</div>
+          <table>
+            <tr><th style="width: 25%;">Customer Full Name</th><td><strong>${escapeHtml(plot.buyerName || 'Not Set / Record Pending')}</strong></td></tr>
+            <tr><th>Contact Phone Number</th><td>${escapeHtml(plot.buyerPhone || 'Not Set')}</td></tr>
+          </table>
+
+          <div class="section-title">Payment Milestone & Transaction Tracking Breakdown</div>
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 8%;">S.No</th>
+                <th style="width: 38%;">Payment Milestone / Stage</th>
+                <th style="width: 24%;">Received Date</th>
+                <th style="width: 30%; text-align: right;">Amount Paid</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td><strong>Advance Payment (Token)</strong><br><span style="font-size: 10px; color: #64748b;">Initial plot reservation</span></td>
+                <td>${escapeHtml(fmtDate(plot.advanceDate))}</td>
+                <td class="amount">${fmt(advAmt)}</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td><strong>Agreement Payment</strong><br><span style="font-size: 10px; color: #64748b;">Sale agreement execution</span></td>
+                <td>${escapeHtml(fmtDate(plot.agreementDate))}</td>
+                <td class="amount">${fmt(agrAmt)}</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td><strong>Registration Payment</strong><br><span style="font-size: 10px; color: #64748b;">Sub-Registrar clearance & registration</span></td>
+                <td>${escapeHtml(fmtDate(plot.registrationDate))}</td>
+                <td class="amount">${fmt(regAmt)}</td>
+              </tr>
+              <tr class="total-row">
+                <td colspan="3" style="text-align: right;">TOTAL DEAL VALUE (Agreed Consideration):</td>
+                <td class="amount">${fmt(totDeal)}</td>
+              </tr>
+              <tr style="background: #f1f5f9; font-weight: 700;">
+                <td colspan="3" style="text-align: right;">Total Amount Received to Date:</td>
+                <td class="amount" style="color: #047857;">${fmt(totRcvd)}</td>
+              </tr>
+              <tr class="${balDue <= 0 && totDeal > 0 ? 'paid-row' : 'balance-row'}">
+                <td colspan="3" style="text-align: right;">REMAINING BALANCE DUE:</td>
+                <td class="amount">${balDue <= 0 && totDeal > 0 ? '₹0 (PAID IN FULL ✓)' : fmt(balDue)}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          ${plot.paymentNotes ? `
+            <div class="notes-box">
+              <strong>Transaction / Cheque / Bank Details:</strong><br>
+              ${escapeHtml(plot.paymentNotes)}
+            </div>
+          ` : ''}
+
+          <div class="footer-sig">
+            <div class="sig-line">Customer Signature</div>
+            <div class="sig-line">For Tamizh Real Estate<br><span style="font-size: 10.5px; font-weight: normal; color: #64748b;">Authorized Signatory</span></div>
+          </div>
+        </body>
+        </html>
+      `;
+
+      const printWin = window.open('', '_blank');
+      if (printWin) {
+        printWin.document.write(printHtml);
+        printWin.document.close();
+        setTimeout(() => {
+          printWin.focus();
+          printWin.print();
+        }, 500);
+      }
+    }
+
+    function downloadPropertyStatement(propId) {
+      const prop = cachedProperties.find(p => p.id === propId);
+      if (!prop) return;
+
+      const layoutPlots = cachedPlots.filter(p => (p.layoutId || 1) === prop.id);
+
+      // If standalone property (e.g. Building Construction, House, Farmland) with no plots, print Individual Property Statement
+      if (layoutPlots.length === 0) {
+        const totDeal = parseFloat(prop.totalDealAmount) || 0;
+        const advAmt = parseFloat(prop.advanceAmount) || 0;
+        const agrAmt = parseFloat(prop.agreementAmount) || 0;
+        const regAmt = parseFloat(prop.registrationAmount) || 0;
+        const totRcvd = advAmt + agrAmt + regAmt;
+        const balDue = totDeal > 0 ? (totDeal - totRcvd) : 0;
+
+        const fmt = (n) => n > 0 ? '₹' + n.toLocaleString('en-IN') : '₹0';
+        const fmtDate = (d) => d ? d : 'Pending / Not Recorded';
+
+        const standaloneHtml = `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <title>Property Payment Statement - ${escapeHtml(prop.title)}</title>
+            <style>
+              @media print {
+                @page { size: A4 portrait; margin: 15mm; }
+                body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+              }
+              body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+                color: #0f172a;
+                background: #ffffff;
+                margin: 0;
+                padding: 24px;
+                line-height: 1.5;
+              }
+              .header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                border-bottom: 3px solid #b45309;
+                padding-bottom: 14px;
+                margin-bottom: 20px;
+              }
+              .logo-wrap { display: flex; align-items: center; gap: 14px; }
+              .logo-img { width: 68px; height: 68px; object-fit: contain; }
+              .company-name { font-size: 22px; font-weight: 900; color: #78350f; letter-spacing: 0.5px; margin: 0; }
+              .company-sub { font-size: 12px; color: #475569; margin: 2px 0 0 0; }
+              .badge {
+                display: inline-block;
+                padding: 4px 12px;
+                background: #fef3c7;
+                border: 1px solid #d97706;
+                border-radius: 20px;
+                font-size: 11px;
+                font-weight: 800;
+                color: #92400e;
+                text-transform: uppercase;
+              }
+              .title-box {
+                background: #f8fafc;
+                border: 1.5px solid #cbd5e1;
+                border-radius: 10px;
+                padding: 14px 18px;
+                margin-bottom: 20px;
+              }
+              table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 20px; }
+              th, td { padding: 10px 14px; border: 1px solid #cbd5e1; text-align: left; font-size: 13px; }
+              th { background: #f1f5f9; font-weight: 700; color: #334155; }
+              .amount { text-align: right; font-family: monospace; font-weight: 700; font-size: 14px; }
+              .summary-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+                margin: 20px 0;
+              }
+              .summary-box {
+                padding: 14px;
+                border-radius: 10px;
+                border: 1px solid #cbd5e1;
+                text-align: center;
+              }
+              .summary-label { font-size: 11px; text-transform: uppercase; font-weight: 700; color: #64748b; }
+              .summary-val { font-size: 20px; font-weight: 900; font-family: monospace; margin-top: 4px; }
+              .section-title {
+                font-size: 14px;
+                font-weight: 800;
+                color: #0f172a;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                border-left: 4px solid #b45309;
+                padding-left: 8px;
+                margin-top: 20px;
+                margin-bottom: 8px;
+              }
+              .footer {
+                margin-top: 50px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding-top: 24px;
+                font-size: 12px;
+              }
+              .sig-line { width: 180px; border-top: 1.5px solid #0f172a; text-align: center; padding-top: 6px; font-weight: bold; }
+            </style>
+          </head>
+          <body>
+            <div class="header">
+              <div class="logo-wrap">
+                <img src="/logo.png" class="logo-img" alt="Logo" onerror="this.style.display='none'">
+                <div>
+                  <h1 class="company-name">TAMIZH REAL ESTATE</h1>
+                  <p class="company-sub">No.01, Sowbhagya Nagar, Nellikuppam Road, Kayarambedu, Guduvanchery, Chennai - 603202</p>
+                  <p class="company-sub">Phone / WhatsApp: +91 98406 15219 • Founder: Mr. K. Kulasekaran</p>
+                </div>
+              </div>
+              <div style="text-align: right;">
+                <span class="badge">Official Property Statement</span>
+                <p style="font-size: 11px; color: #64748b; margin: 4px 0 0 0;">Statement Date: ${new Date().toLocaleDateString('en-IN')}</p>
+              </div>
+            </div>
+
+            <div class="title-box">
+              <table style="border: none; margin: 0;">
+                <tr style="background: transparent;"><td style="border: none; padding: 2px 0;"><strong>Property Name:</strong></td><td style="border: none; padding: 2px 0; color: #b45309; font-weight: 800; font-size: 14px;">${escapeHtml(prop.title)}</td><td style="border: none; padding: 2px 0;"><strong>Property ID:</strong></td><td style="border: none; padding: 2px 0; font-weight: 800; font-size: 14px; color: #047857;">#${prop.id}</td></tr>
+                <tr style="background: transparent;"><td style="border: none; padding: 2px 0;"><strong>Category:</strong></td><td style="border: none; padding: 2px 0;">${escapeHtml(prop.category)}</td><td style="border: none; padding: 2px 0;"><strong>Current Status:</strong></td><td style="border: none; padding: 2px 0; font-weight: bold;">${escapeHtml(prop.status || 'Active')}</td></tr>
+                <tr style="background: transparent;"><td style="border: none; padding: 2px 0;"><strong>Locality:</strong></td><td style="border: none; padding: 2px 0;">${escapeHtml(prop.location)}</td><td style="border: none; padding: 2px 0;"><strong>Specifications:</strong></td><td style="border: none; padding: 2px 0;">${escapeHtml(prop.specs || 'N/A')}</td></tr>
+                ${prop.sanctionNumber ? `<tr style="background: transparent;"><td style="border: none; padding: 2px 0;"><strong>Sanction / Approval:</strong></td><td style="border: none; padding: 2px 0;" colspan="3">${escapeHtml(prop.sanctionNumber)}</td></tr>` : ''}
+              </table>
+            </div>
+
+            <div class="section-title">Customer / Buyer Particulars</div>
+            <table>
+              <tr><th style="width: 25%;">Customer Full Name</th><td><strong>${escapeHtml(prop.buyerName || 'Not Set / Record Pending')}</strong></td></tr>
+              <tr><th>Contact Phone Number</th><td>${escapeHtml(prop.buyerPhone || 'Not Set')}</td></tr>
+            </table>
+
+            <div class="section-title">Payment Milestone & Transaction Tracking Breakdown</div>
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 8%;">S.No</th>
+                  <th style="width: 38%;">Payment Milestone / Stage</th>
+                  <th style="width: 24%;">Received Date</th>
+                  <th style="width: 30%; text-align: right;">Amount Paid</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td><strong>Advance Payment (Token)</strong><br><span style="font-size: 10px; color: #64748b;">Initial booking / reservation advance</span></td>
+                  <td>${escapeHtml(fmtDate(prop.advanceDate))}</td>
+                  <td class="amount">${fmt(advAmt)}</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td><strong>Agreement Payment</strong><br><span style="font-size: 10px; color: #64748b;">Construction / sale agreement execution</span></td>
+                  <td>${escapeHtml(fmtDate(prop.agreementDate))}</td>
+                  <td class="amount">${fmt(agrAmt)}</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td><strong>Registration / SRO Payment</strong><br><span style="font-size: 10px; color: #64748b;">Sub-Registrar office final deed / handover</span></td>
+                  <td>${escapeHtml(fmtDate(prop.registrationDate))}</td>
+                  <td class="amount">${fmt(regAmt)}</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="summary-grid">
+              <div class="summary-box" style="background: #f8fafc;">
+                <div class="summary-label">Total Agreed Deal Amount</div>
+                <div class="summary-val" style="color: #0f172a;">${fmt(totDeal)}</div>
+              </div>
+              <div class="summary-box" style="background: #ecfdf5; border-color: #a7f3d0;">
+                <div class="summary-label" style="color: #047857;">Total Received so far</div>
+                <div class="summary-val" style="color: #047857;">${fmt(totRcvd)}</div>
+              </div>
+              <div class="summary-box" style="background: #fff1f2; border-color: #fecdd3;">
+                <div class="summary-label" style="color: #b91c1c;">Balance Pending Amount</div>
+                <div class="summary-val" style="color: #b91c1c;">${totDeal > 0 && balDue <= 0 ? 'PAID IN FULL ✓' : fmt(balDue)}</div>
+              </div>
+            </div>
+
+            ${prop.paymentNotes ? `
+              <div class="section-title">Administrative Notes & Payment Remarks</div>
+              <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px 14px; font-size: 12px; color: #334155; line-height: 1.6;">
+                ${escapeHtml(prop.paymentNotes).replace(/\n/g, '<br>')}
+              </div>
+            ` : ''}
+
+            <div class="footer">
+              <div class="sig-line">
+                Customer Signature<br>
+                <span style="font-size: 10px; font-weight: normal; color: #64748b;">(${escapeHtml(prop.buyerName || 'Buyer')})</span>
+              </div>
+              <div class="sig-line">
+                For Tamizh Real Estate<br>
+                <span style="font-size: 10px; font-weight: normal; color: #64748b;">Authorized Signatory</span>
+              </div>
+            </div>
+          </body>
+          </html>
+        `;
+
+        const printWin = window.open('', '_blank');
+        if (printWin) {
+          printWin.document.write(standaloneHtml);
+          printWin.document.close();
+          setTimeout(() => {
+            printWin.focus();
+            printWin.print();
+          }, 500);
+        }
+        return;
+      }
+
+      let totalPlotsDeal = 0;
+      let totalPlotsReceived = 0;
+      let totalPlotsBalance = 0;
+
+      const plotRowsHtml = layoutPlots.map((pl, idx) => {
+        const deal = parseFloat(pl.totalDealAmount) || 0;
+        const adv = parseFloat(pl.advanceAmount) || 0;
+        const agr = parseFloat(pl.agreementAmount) || 0;
+        const reg = parseFloat(pl.registrationAmount) || 0;
+        const rcvd = adv + agr + reg;
+        const bal = deal > 0 ? (deal - rcvd) : 0;
+
+        totalPlotsDeal += deal;
+        totalPlotsReceived += rcvd;
+        totalPlotsBalance += bal;
+
+        return `
+          <tr>
+            <td>${idx + 1}</td>
+            <td><strong>${escapeHtml(pl.number)}</strong></td>
+            <td>${escapeHtml(pl.areaSqft ? pl.areaSqft + ' Sq.Ft' : (pl.dimension || 'Standard'))}</td>
+            <td>${escapeHtml(pl.status)}</td>
+            <td>${escapeHtml(pl.buyerName || '--')}</td>
+            <td style="text-align: right; font-family: monospace;">${deal > 0 ? '₹' + deal.toLocaleString('en-IN') : '--'}</td>
+            <td style="text-align: right; font-family: monospace; color: #047857;">${rcvd > 0 ? '₹' + rcvd.toLocaleString('en-IN') : '--'}</td>
+            <td style="text-align: right; font-family: monospace; color: ${bal > 0 ? '#b91c1c' : '#047857'}; font-weight: bold;">${deal > 0 ? (bal <= 0 ? 'PAID ✓' : '₹' + bal.toLocaleString('en-IN')) : '--'}</td>
+          </tr>
+        `;
+      }).join('');
+
+      const printHtml = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Master Layout Statement - ${escapeHtml(prop.title)}</title>
+          <style>
+            @media print {
+              @page { size: A4 landscape; margin: 12mm; }
+              body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            }
+            body {
+              font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+              color: #0f172a;
+              background: #ffffff;
+              padding: 20px;
+              font-size: 12px;
+            }
+            .header {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              border-bottom: 3px solid #b45309;
+              padding-bottom: 12px;
+              margin-bottom: 16px;
+            }
+            .logo-wrap { display: flex; align-items: center; gap: 12px; }
+            .logo-img { width: 60px; height: 60px; object-fit: contain; }
+            .company-name { font-size: 20px; font-weight: 900; color: #78350f; margin: 0; }
+            .company-sub { font-size: 11px; color: #475569; margin: 1px 0 0 0; }
+            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+            th, td { padding: 6px 10px; border: 1px solid #cbd5e1; text-align: left; }
+            th { background: #f1f5f9; font-weight: 700; color: #334155; }
+            .summary-card {
+              display: flex;
+              gap: 12px;
+              margin: 12px 0;
+            }
+            .stat-box {
+              flex: 1;
+              background: #f8fafc;
+              border: 1px solid #cbd5e1;
+              border-radius: 8px;
+              padding: 8px 12px;
+              text-align: center;
+            }
+            .stat-val { font-size: 16px; font-weight: 900; color: #b45309; font-family: monospace; }
+            .stat-lbl { font-size: 10.5px; text-transform: uppercase; color: #64748b; font-weight: 700; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="logo-wrap">
+              <img src="/logo.png" class="logo-img" alt="Logo" onerror="this.style.display='none'">
+              <div>
+                <h1 class="company-name">TAMIZH REAL ESTATE</h1>
+                <p class="company-sub">No.01, Sowbhagya Nagar, Nellikuppam Road, Kayarambedu, Guduvanchery, Chennai - 603202</p>
+                <p class="company-sub">Phone: +91 98406 15219 • Founder: Mr. K. Kulasekaran</p>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <span style="font-weight: 900; color: #78350f; font-size: 14px;">LAYOUT & PROPERTY MASTER STATEMENT</span>
+              <p style="font-size: 11px; color: #64748b; margin: 2px 0 0 0;">Generated: ${new Date().toLocaleDateString('en-IN')}</p>
+            </div>
+          </div>
+
+          <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+              <div><strong>Property / Layout:</strong> <span style="font-size: 14px; font-weight: 800; color: #78350f;">${escapeHtml(prop.title)}</span> (ID #${prop.id})</div>
+              <div><strong>Category:</strong> ${escapeHtml(prop.category)}</div>
+              <div><strong>Location:</strong> 📍 ${escapeHtml(prop.location)}</div>
+              ${prop.sanctionNumber ? `<div><strong>DTCP Sanction:</strong> ${escapeHtml(prop.sanctionNumber)}</div>` : ''}
+              ${prop.ownerName ? `<div><strong>Landowner:</strong> ${escapeHtml(prop.ownerName)} ${escapeHtml(prop.ownerPhone || '')}</div>` : ''}
+            </div>
+          </div>
+
+          <div class="summary-card">
+            <div class="stat-box"><div class="stat-lbl">Total Plots</div><div class="stat-val">${layoutPlots.length}</div></div>
+            <div class="stat-box"><div class="stat-lbl">Available</div><div class="stat-val" style="color: #047857;">${layoutPlots.filter(p => p.status === 'Available' || p.status === 'Active').length}</div></div>
+            <div class="stat-box"><div class="stat-lbl">Booked</div><div class="stat-val" style="color: #b45309;">${layoutPlots.filter(p => p.status === 'Booked').length}</div></div>
+            <div class="stat-box"><div class="stat-lbl">Sold</div><div class="stat-val" style="color: #991b1b;">${layoutPlots.filter(p => p.status === 'Sold').length}</div></div>
+            <div class="stat-box"><div class="stat-lbl">Total Deal Value</div><div class="stat-val">₹${totalPlotsDeal.toLocaleString('en-IN')}</div></div>
+            <div class="stat-box"><div class="stat-lbl">Total Received</div><div class="stat-val" style="color: #047857;">₹${totalPlotsReceived.toLocaleString('en-IN')}</div></div>
+            <div class="stat-box"><div class="stat-lbl">Balance Receivable</div><div class="stat-val" style="color: #b91c1c;">₹${totalPlotsBalance.toLocaleString('en-IN')}</div></div>
+          </div>
+
+          <table style="margin-top: 10px;">
+            <thead>
+              <tr>
+                <th style="width: 4%;">#</th>
+                <th style="width: 14%;">Plot Number</th>
+                <th style="width: 14%;">Extent / Area</th>
+                <th style="width: 10%;">Status</th>
+                <th style="width: 22%;">Customer / Buyer Name</th>
+                <th style="width: 12%; text-align: right;">Deal Value</th>
+                <th style="width: 12%; text-align: right;">Received</th>
+                <th style="width: 12%; text-align: right;">Balance</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${plotRowsHtml || '<tr><td colspan="8" style="text-align: center; color: #64748b;">No plots created for this layout yet.</td></tr>'}
+            </tbody>
+          </table>
+
+          <div style="margin-top: 40px; display: flex; justify-content: flex-end;">
+            <div style="width: 200px; border-top: 1.5px solid #0f172a; text-align: center; padding-top: 6px; font-weight: bold;">
+              For Tamizh Real Estate<br><span style="font-size: 10px; font-weight: normal; color: #64748b;">Authorized Signatory</span>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+
+      const printWin = window.open('', '_blank');
+      if (printWin) {
+        printWin.document.write(printHtml);
+        printWin.document.close();
+        setTimeout(() => {
+          printWin.focus();
+          printWin.print();
+        }, 500);
+      }
     }
 
     initDashboard();
