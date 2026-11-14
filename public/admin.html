@@ -139,7 +139,7 @@
     <div class="max-w-[1920px] w-full mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-14 flex justify-between items-center">
       <div class="flex items-center gap-3.5 sm:gap-5 lg:gap-6">
         <a href="/" class="group">
-          <img src="/logo.png" alt="Tamizh Real Estate Logo" class="w-18 h-18 sm:w-22 sm:h-22 lg:w-24 lg:h-24 object-contain rounded-full border-[2.5px] border-amber-400 shadow-[0_0_25px_rgba(218,165,32,0.55)] group-hover:scale-105 transition flex-shrink-0 bg-slate-950">
+          <img src="/logo.png?v=1794591835819" alt="Tamizh Real Estate Logo" class="w-18 h-18 sm:w-22 sm:h-22 lg:w-24 lg:h-24 object-contain rounded-full border-[2.5px] border-amber-400 shadow-[0_0_25px_rgba(218,165,32,0.55)] group-hover:scale-105 transition flex-shrink-0 bg-transparent">
         </a>
         <div>
           <div class="text-base sm:text-xl lg:text-2xl font-bold text-white flex items-center gap-2.5">
@@ -5007,7 +5007,7 @@
         <body>
           <div class="header">
             <div class="logo-wrap">
-              <img src="/logo.png" class="logo-img" alt="Logo" onerror="this.style.display='none'">
+              <img src="/logo.png?v=1794591835819" class="logo-img" alt="Logo" onerror="this.style.display='none'">
               <div>
                 <h1 class="company-name">TAMIZH REAL ESTATE</h1>
                 <p class="company-sub">No.01, Sowbhagya Nagar, Nellikuppam Road, Kayarambedu, Guduvanchery, Chennai - 603202</p>
@@ -5214,7 +5214,7 @@
           <body>
             <div class="header">
               <div class="logo-wrap">
-                <img src="/logo.png" class="logo-img" alt="Logo" onerror="this.style.display='none'">
+                <img src="/logo.png?v=1794591835819" class="logo-img" alt="Logo" onerror="this.style.display='none'">
                 <div>
                   <h1 class="company-name">TAMIZH REAL ESTATE</h1>
                   <p class="company-sub">No.01, Sowbhagya Nagar, Nellikuppam Road, Kayarambedu, Guduvanchery, Chennai - 603202</p>
@@ -5325,6 +5325,9 @@
       let totalPlotsDeal = 0;
       let totalPlotsReceived = 0;
       let totalPlotsBalance = 0;
+      let totalPlotsAdvance = 0;
+      let totalPlotsAgreement = 0;
+      let totalPlotsRegistration = 0;
 
       const plotRowsHtml = layoutPlots.map((pl, idx) => {
         const deal = parseFloat(pl.totalDealAmount) || 0;
@@ -5337,16 +5340,40 @@
         totalPlotsDeal += deal;
         totalPlotsReceived += rcvd;
         totalPlotsBalance += bal;
+        totalPlotsAdvance += adv;
+        totalPlotsAgreement += agr;
+        totalPlotsRegistration += reg;
 
         return `
           <tr>
-            <td>${idx + 1}</td>
+            <td style="text-align: center;">${idx + 1}</td>
             <td><strong>${escapeHtml(pl.number)}</strong></td>
             <td>${escapeHtml(pl.areaSqft ? pl.areaSqft + ' Sq.Ft' : (pl.dimension || 'Standard'))}</td>
-            <td>${escapeHtml(pl.status)}</td>
-            <td>${escapeHtml(pl.buyerName || '--')}</td>
-            <td style="text-align: right; font-family: monospace;">${deal > 0 ? '₹' + deal.toLocaleString('en-IN') : '--'}</td>
-            <td style="text-align: right; font-family: monospace; color: #047857;">${rcvd > 0 ? '₹' + rcvd.toLocaleString('en-IN') : '--'}</td>
+            <td><span style="display: inline-block; padding: 2px 7px; border-radius: 4px; font-weight: 700; font-size: 10px; text-transform: uppercase; ${pl.status === 'Sold' ? 'background: #fee2e2; color: #991b1b;' : (pl.status === 'Booked' ? 'background: #fef3c7; color: #92400e;' : 'background: #d1fae5; color: #065f46;')}">${escapeHtml(pl.status)}</span></td>
+            <td>
+              <strong>${escapeHtml(pl.buyerName || '--')}</strong>
+              ${pl.buyerPhone ? `<br><span style="font-size: 10px; color: #64748b;">📞 ${escapeHtml(pl.buyerPhone)}</span>` : ''}
+            </td>
+            <td style="text-align: right; font-family: monospace; font-weight: bold;">${deal > 0 ? '₹' + deal.toLocaleString('en-IN') : '--'}</td>
+            <td style="text-align: right; font-family: monospace;">
+              ${adv > 0 ? `<div style="font-weight: 800; color: #047857; font-size: 11.5px;">₹${adv.toLocaleString('en-IN')}</div>` : '<span style="color: #94a3b8;">--</span>'}
+              <div style="font-size: 9.5px; color: ${pl.advanceDate ? '#0f172a' : '#94a3b8'}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-weight: ${pl.advanceDate ? '600' : 'normal'}; margin-top: 1px;">
+                ${pl.advanceDate ? `📅 ${escapeHtml(pl.advanceDate)}` : (adv > 0 ? 'Date: Pending' : '')}
+              </div>
+            </td>
+            <td style="text-align: right; font-family: monospace;">
+              ${agr > 0 ? `<div style="font-weight: 800; color: #1d4ed8; font-size: 11.5px;">₹${agr.toLocaleString('en-IN')}</div>` : '<span style="color: #94a3b8;">--</span>'}
+              <div style="font-size: 9.5px; color: ${pl.agreementDate ? '#0f172a' : '#94a3b8'}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-weight: ${pl.agreementDate ? '600' : 'normal'}; margin-top: 1px;">
+                ${pl.agreementDate ? `📅 ${escapeHtml(pl.agreementDate)}` : (agr > 0 ? 'Date: Pending' : '')}
+              </div>
+            </td>
+            <td style="text-align: right; font-family: monospace;">
+              ${reg > 0 ? `<div style="font-weight: 800; color: #7c3aed; font-size: 11.5px;">₹${reg.toLocaleString('en-IN')}</div>` : '<span style="color: #94a3b8;">--</span>'}
+              <div style="font-size: 9.5px; color: ${pl.registrationDate ? '#0f172a' : '#94a3b8'}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-weight: ${pl.registrationDate ? '600' : 'normal'}; margin-top: 1px;">
+                ${pl.registrationDate ? `📅 ${escapeHtml(pl.registrationDate)}` : (reg > 0 ? 'Date: Pending' : '')}
+              </div>
+            </td>
+            <td style="text-align: right; font-family: monospace; color: #047857; font-weight: bold;">${rcvd > 0 ? '₹' + rcvd.toLocaleString('en-IN') : '--'}</td>
             <td style="text-align: right; font-family: monospace; color: ${bal > 0 ? '#b91c1c' : '#047857'}; font-weight: bold;">${deal > 0 ? (bal <= 0 ? 'PAID ✓' : '₹' + bal.toLocaleString('en-IN')) : '--'}</td>
           </tr>
         `;
@@ -5382,8 +5409,8 @@
             .logo-img { width: 60px; height: 60px; object-fit: contain; }
             .company-name { font-size: 20px; font-weight: 900; color: #78350f; margin: 0; }
             .company-sub { font-size: 11px; color: #475569; margin: 1px 0 0 0; }
-            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-            th, td { padding: 6px 10px; border: 1px solid #cbd5e1; text-align: left; }
+            table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 11px; }
+            th, td { padding: 5px 6px; border: 1px solid #cbd5e1; text-align: left; }
             th { background: #f1f5f9; font-weight: 700; color: #334155; }
             .summary-card {
               display: flex;
@@ -5405,7 +5432,7 @@
         <body>
           <div class="header">
             <div class="logo-wrap">
-              <img src="/logo.png" class="logo-img" alt="Logo" onerror="this.style.display='none'">
+              <img src="/logo.png?v=1794591835819" class="logo-img" alt="Logo" onerror="this.style.display='none'">
               <div>
                 <h1 class="company-name">TAMIZH REAL ESTATE</h1>
                 <p class="company-sub">No.01, Sowbhagya Nagar, Nellikuppam Road, Kayarambedu, Guduvanchery, Chennai - 603202</p>
@@ -5441,19 +5468,35 @@
           <table style="margin-top: 10px;">
             <thead>
               <tr>
-                <th style="width: 4%;">#</th>
-                <th style="width: 14%;">Plot Number</th>
-                <th style="width: 14%;">Extent / Area</th>
-                <th style="width: 10%;">Status</th>
-                <th style="width: 22%;">Customer / Buyer Name</th>
-                <th style="width: 12%; text-align: right;">Deal Value</th>
-                <th style="width: 12%; text-align: right;">Received</th>
-                <th style="width: 12%; text-align: right;">Balance</th>
+                <th style="width: 3%; text-align: center;">#</th>
+                <th style="width: 10%;">Plot Number</th>
+                <th style="width: 9%;">Extent</th>
+                <th style="width: 8%;">Status</th>
+                <th style="width: 15%;">Customer / Buyer Name</th>
+                <th style="width: 10%; text-align: right;">Deal Value</th>
+                <th style="width: 11%; text-align: right;">Advance (Token)</th>
+                <th style="width: 11%; text-align: right;">Agreement</th>
+                <th style="width: 11%; text-align: right;">Registration</th>
+                <th style="width: 10%; text-align: right;">Total Rcvd</th>
+                <th style="width: 10%; text-align: right;">Balance Due</th>
               </tr>
             </thead>
             <tbody>
-              ${plotRowsHtml || '<tr><td colspan="8" style="text-align: center; color: #64748b;">No plots created for this layout yet.</td></tr>'}
+              ${plotRowsHtml || '<tr><td colspan="11" style="text-align: center; color: #64748b;">No plots created for this layout yet.</td></tr>'}
             </tbody>
+            ${layoutPlots.length > 0 ? `
+              <tfoot>
+                <tr style="background: #f8fafc; font-weight: 800; border-top: 2px solid #0f172a;">
+                  <td colspan="5" style="text-align: right; text-transform: uppercase; letter-spacing: 0.5px; font-size: 11px;">Consolidated Layout Totals:</td>
+                  <td style="text-align: right; font-family: monospace; font-size: 13px;">₹${totalPlotsDeal.toLocaleString('en-IN')}</td>
+                  <td style="text-align: right; font-family: monospace; color: #047857;">₹${totalPlotsAdvance.toLocaleString('en-IN')}</td>
+                  <td style="text-align: right; font-family: monospace; color: #1d4ed8;">₹${totalPlotsAgreement.toLocaleString('en-IN')}</td>
+                  <td style="text-align: right; font-family: monospace; color: #7c3aed;">₹${totalPlotsRegistration.toLocaleString('en-IN')}</td>
+                  <td style="text-align: right; font-family: monospace; color: #047857; font-size: 13px;">₹${totalPlotsReceived.toLocaleString('en-IN')}</td>
+                  <td style="text-align: right; font-family: monospace; color: ${totalPlotsBalance > 0 ? '#b91c1c' : '#047857'}; font-size: 13px;">${totalPlotsBalance <= 0 && totalPlotsDeal > 0 ? 'PAID ✓' : '₹' + totalPlotsBalance.toLocaleString('en-IN')}</td>
+                </tr>
+              </tfoot>
+            ` : ''}
           </table>
 
           <div style="margin-top: 40px; display: flex; justify-content: flex-end;">
