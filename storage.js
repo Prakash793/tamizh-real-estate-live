@@ -241,7 +241,17 @@ async function initDB() {
       'ALTER TABLE trs_plots ADD COLUMN IF NOT EXISTS plot_type VARCHAR(100) DEFAULT \'Residential\'',
       'ALTER TABLE trs_plots ADD COLUMN IF NOT EXISTS notes TEXT DEFAULT \'\'',
       'ALTER TABLE trs_plots ADD COLUMN IF NOT EXISTS image TEXT DEFAULT \'\'',
-      'ALTER TABLE trs_plots ADD COLUMN IF NOT EXISTS gallery JSONB DEFAULT \'[]\'::jsonb'
+      'ALTER TABLE trs_plots ADD COLUMN IF NOT EXISTS gallery JSONB DEFAULT \'[]\'::jsonb',
+      'ALTER TABLE trs_plots ADD COLUMN IF NOT EXISTS buyer_name VARCHAR(255) DEFAULT \'\'',
+      'ALTER TABLE trs_plots ADD COLUMN IF NOT EXISTS buyer_phone VARCHAR(50) DEFAULT \'\'',
+      'ALTER TABLE trs_plots ADD COLUMN IF NOT EXISTS total_deal_amount VARCHAR(100) DEFAULT \'\'',
+      'ALTER TABLE trs_plots ADD COLUMN IF NOT EXISTS advance_amount VARCHAR(100) DEFAULT \'\'',
+      'ALTER TABLE trs_plots ADD COLUMN IF NOT EXISTS advance_date VARCHAR(50) DEFAULT \'\'',
+      'ALTER TABLE trs_plots ADD COLUMN IF NOT EXISTS agreement_amount VARCHAR(100) DEFAULT \'\'',
+      'ALTER TABLE trs_plots ADD COLUMN IF NOT EXISTS agreement_date VARCHAR(50) DEFAULT \'\'',
+      'ALTER TABLE trs_plots ADD COLUMN IF NOT EXISTS registration_amount VARCHAR(100) DEFAULT \'\'',
+      'ALTER TABLE trs_plots ADD COLUMN IF NOT EXISTS registration_date VARCHAR(50) DEFAULT \'\'',
+      'ALTER TABLE trs_plots ADD COLUMN IF NOT EXISTS payment_notes TEXT DEFAULT \'\''
     ];
     for (const aq of alterQueries) {
       try { await client.query(aq); } catch (e) {}
@@ -543,6 +553,16 @@ async function addProperty(prop) {
     buildingPhotos: Array.isArray(prop.buildingPhotos) ? prop.buildingPhotos : [],
     amenitiesPhotos: Array.isArray(prop.amenitiesPhotos) ? prop.amenitiesPhotos : [],
     managePlots: prop.managePlots !== false,
+    buyerName: prop.buyerName ? String(prop.buyerName).trim() : '',
+    buyerPhone: prop.buyerPhone ? String(prop.buyerPhone).trim() : '',
+    totalDealAmount: prop.totalDealAmount !== undefined ? String(prop.totalDealAmount).trim() : '',
+    advanceAmount: prop.advanceAmount !== undefined ? String(prop.advanceAmount).trim() : '',
+    advanceDate: prop.advanceDate ? String(prop.advanceDate).trim() : '',
+    agreementAmount: prop.agreementAmount !== undefined ? String(prop.agreementAmount).trim() : '',
+    agreementDate: prop.agreementDate ? String(prop.agreementDate).trim() : '',
+    registrationAmount: prop.registrationAmount !== undefined ? String(prop.registrationAmount).trim() : '',
+    registrationDate: prop.registrationDate ? String(prop.registrationDate).trim() : '',
+    paymentNotes: prop.paymentNotes ? String(prop.paymentNotes).trim() : '',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
@@ -670,14 +690,24 @@ async function deleteProperty(id) {
 // ----------------- PLOTS API -----------------
 async function getPlots() {
   if (isPostgres) {
-    const res = await pgPool.query('SELECT id, layout_id AS "layoutId", number, layout, dimension, facing, price, status, COALESCE(area_sqft, 0) AS "areaSqft", COALESCE(plot_type, \'Residential\') AS "plotType", COALESCE(notes, \'\') AS "notes", COALESCE(image, \'\') AS "image", COALESCE(gallery, \'[]\'::jsonb) AS "gallery" FROM trs_plots ORDER BY id ASC');
+    const res = await pgPool.query('SELECT id, layout_id AS "layoutId", number, layout, dimension, facing, price, status, COALESCE(area_sqft, 0) AS "areaSqft", COALESCE(plot_type, \'Residential\') AS "plotType", COALESCE(notes, \'\') AS "notes", COALESCE(image, \'\') AS "image", COALESCE(gallery, \'[]\'::jsonb) AS "gallery", COALESCE(buyer_name, \'\') AS "buyerName", COALESCE(buyer_phone, \'\') AS "buyerPhone", COALESCE(total_deal_amount, \'\') AS "totalDealAmount", COALESCE(advance_amount, \'\') AS "advanceAmount", COALESCE(advance_date, \'\') AS "advanceDate", COALESCE(agreement_amount, \'\') AS "agreementAmount", COALESCE(agreement_date, \'\') AS "agreementDate", COALESCE(registration_amount, \'\') AS "registrationAmount", COALESCE(registration_date, \'\') AS "registrationDate", COALESCE(payment_notes, \'\') AS "paymentNotes" FROM trs_plots ORDER BY id ASC');
     return res.rows.map(r => ({
       ...r,
       layoutId: parseInt(r.layoutId, 10) || 1,
       areaSqft: parseInt(r.areaSqft, 10) || 0,
       image: r.image || '',
       gallery: Array.isArray(r.gallery) ? r.gallery : (r.gallery ? (typeof r.gallery === 'string' ? JSON.parse(r.gallery) : []) : []),
-      status: (r.status === 'Active' ? 'Available' : (r.status || 'Available'))
+      status: (r.status === 'Active' ? 'Available' : (r.status || 'Available')),
+      buyerName: r.buyerName || '',
+      buyerPhone: r.buyerPhone || '',
+      totalDealAmount: r.totalDealAmount || '',
+      advanceAmount: r.advanceAmount || '',
+      advanceDate: r.advanceDate || '',
+      agreementAmount: r.agreementAmount || '',
+      agreementDate: r.agreementDate || '',
+      registrationAmount: r.registrationAmount || '',
+      registrationDate: r.registrationDate || '',
+      paymentNotes: r.paymentNotes || ''
     }));
   }
   if (!fs.existsSync(PLOTS_FILE)) return [];
@@ -691,7 +721,17 @@ async function getPlots() {
       notes: r.notes || '',
       image: r.image || '',
       gallery: Array.isArray(r.gallery) ? r.gallery : (r.gallery ? (typeof r.gallery === 'string' ? JSON.parse(r.gallery) : []) : []),
-      status: (r.status === 'Active' ? 'Available' : (r.status || 'Available'))
+      status: (r.status === 'Active' ? 'Available' : (r.status || 'Available')),
+      buyerName: r.buyerName || '',
+      buyerPhone: r.buyerPhone || '',
+      totalDealAmount: r.totalDealAmount !== undefined ? String(r.totalDealAmount) : '',
+      advanceAmount: r.advanceAmount !== undefined ? String(r.advanceAmount) : '',
+      advanceDate: r.advanceDate || '',
+      agreementAmount: r.agreementAmount !== undefined ? String(r.agreementAmount) : '',
+      agreementDate: r.agreementDate || '',
+      registrationAmount: r.registrationAmount !== undefined ? String(r.registrationAmount) : '',
+      registrationDate: r.registrationDate || '',
+      paymentNotes: r.paymentNotes || ''
     }));
   } catch (e) { return []; }
 }
@@ -712,10 +752,36 @@ async function addPlot(plot) {
   const rawStatus = plot.status || 'Available';
   const statusVal = rawStatus === 'Active' ? 'Available' : rawStatus;
 
+  const buyerNameVal = plot.buyerName ? String(plot.buyerName).trim() : '';
+  const buyerPhoneVal = plot.buyerPhone ? String(plot.buyerPhone).trim() : '';
+  const totalDealAmountVal = plot.totalDealAmount ? String(plot.totalDealAmount).trim() : '';
+  const advanceAmountVal = plot.advanceAmount ? String(plot.advanceAmount).trim() : '';
+  const advanceDateVal = plot.advanceDate ? String(plot.advanceDate).trim() : '';
+  const agreementAmountVal = plot.agreementAmount ? String(plot.agreementAmount).trim() : '';
+  const agreementDateVal = plot.agreementDate ? String(plot.agreementDate).trim() : '';
+  const registrationAmountVal = plot.registrationAmount ? String(plot.registrationAmount).trim() : '';
+  const registrationDateVal = plot.registrationDate ? String(plot.registrationDate).trim() : '';
+  const paymentNotesVal = plot.paymentNotes ? String(plot.paymentNotes).trim() : '';
+
   if (isPostgres) {
     const res = await pgPool.query(
-      'INSERT INTO trs_plots (layout_id, number, layout, dimension, facing, price, status, area_sqft, plot_type, notes, image, gallery) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING id, layout_id AS "layoutId", number, layout, dimension, facing, price, status, area_sqft AS "areaSqft", plot_type AS "plotType", notes, image, gallery',
-      [targetLayoutId, plot.number, plot.layout || 'Sowbhagya Nagar Layout', plot.dimension, plot.facing, plot.price || 'To be Negotiable', statusVal, areaSqftVal, plotTypeVal, notesVal, imageVal, JSON.stringify(galleryVal)]
+      `INSERT INTO trs_plots (
+        layout_id, number, layout, dimension, facing, price, status, area_sqft, plot_type, notes, image, gallery,
+        buyer_name, buyer_phone, total_deal_amount, advance_amount, advance_date, agreement_amount, agreement_date,
+        registration_amount, registration_date, payment_notes
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22)
+      RETURNING id, layout_id AS "layoutId", number, layout, dimension, facing, price, status, area_sqft AS "areaSqft",
+      plot_type AS "plotType", notes, image, gallery, buyer_name AS "buyerName", buyer_phone AS "buyerPhone",
+      total_deal_amount AS "totalDealAmount", advance_amount AS "advanceAmount", advance_date AS "advanceDate",
+      agreement_amount AS "agreementAmount", agreement_date AS "agreementDate", registration_amount AS "registrationAmount",
+      registration_date AS "registrationDate", payment_notes AS "paymentNotes"`,
+      [
+        targetLayoutId, plot.number, plot.layout || 'Sowbhagya Nagar Layout', plot.dimension, plot.facing,
+        plot.price || 'To be Negotiable', statusVal, areaSqftVal, plotTypeVal, notesVal, imageVal,
+        JSON.stringify(galleryVal), buyerNameVal, buyerPhoneVal, totalDealAmountVal, advanceAmountVal,
+        advanceDateVal, agreementAmountVal, agreementDateVal, registrationAmountVal, registrationDateVal,
+        paymentNotesVal
+      ]
     );
     return res.rows[0];
   }
@@ -734,7 +800,17 @@ async function addPlot(plot) {
     plotType: plotTypeVal,
     notes: notesVal,
     image: imageVal,
-    gallery: galleryVal
+    gallery: galleryVal,
+    buyerName: buyerNameVal,
+    buyerPhone: buyerPhoneVal,
+    totalDealAmount: totalDealAmountVal,
+    advanceAmount: advanceAmountVal,
+    advanceDate: advanceDateVal,
+    agreementAmount: agreementAmountVal,
+    agreementDate: agreementDateVal,
+    registrationAmount: registrationAmountVal,
+    registrationDate: registrationDateVal,
+    paymentNotes: paymentNotesVal
   };
   plots.push(newPlot);
   fs.writeFileSync(PLOTS_FILE, JSON.stringify(plots, null, 2), 'utf8');
@@ -752,12 +828,22 @@ async function updatePlot(id, updates) {
       if (key === 'layoutId') colName = 'layout_id';
       else if (key === 'areaSqft') colName = 'area_sqft';
       else if (key === 'plotType') colName = 'plot_type';
+      else if (key === 'buyerName') colName = 'buyer_name';
+      else if (key === 'buyerPhone') colName = 'buyer_phone';
+      else if (key === 'totalDealAmount') colName = 'total_deal_amount';
+      else if (key === 'advanceAmount') colName = 'advance_amount';
+      else if (key === 'advanceDate') colName = 'advance_date';
+      else if (key === 'agreementAmount') colName = 'agreement_amount';
+      else if (key === 'agreementDate') colName = 'agreement_date';
+      else if (key === 'registrationAmount') colName = 'registration_amount';
+      else if (key === 'registrationDate') colName = 'registration_date';
+      else if (key === 'paymentNotes') colName = 'payment_notes';
       const finalVal = (key === 'gallery') ? JSON.stringify(Array.isArray(val) ? val : []) : val;
       fields.push(`${colName} = $${idx++}`);
       values.push(finalVal);
     }
     values.push(id);
-    const res = await pgPool.query(`UPDATE trs_plots SET ${fields.join(', ')}, updated_at = CURRENT_TIMESTAMP WHERE id = $${idx} RETURNING id, layout_id AS "layoutId", number, layout, dimension, facing, price, status, area_sqft AS "areaSqft", plot_type AS "plotType", notes, image, gallery`, values);
+    const res = await pgPool.query(`UPDATE trs_plots SET ${fields.join(', ')}, updated_at = CURRENT_TIMESTAMP WHERE id = $${idx} RETURNING id, layout_id AS "layoutId", number, layout, dimension, facing, price, status, area_sqft AS "areaSqft", plot_type AS "plotType", notes, image, gallery, buyer_name AS "buyerName", buyer_phone AS "buyerPhone", total_deal_amount AS "totalDealAmount", advance_amount AS "advanceAmount", advance_date AS "advanceDate", agreement_amount AS "agreementAmount", agreement_date AS "agreementDate", registration_amount AS "registrationAmount", registration_date AS "registrationDate", payment_notes AS "paymentNotes"`, values);
     return res.rows[0] ? {
       ...res.rows[0],
       gallery: typeof res.rows[0].gallery === 'string' ? JSON.parse(res.rows[0].gallery) : (res.rows[0].gallery || [])
