@@ -1706,8 +1706,16 @@
       try {
         const pubRes = await fetch('/api/public/data');
         const pubData = await pubRes.json();
-        cachedPlots = pubData.plots || [];
         cachedLayoutDoc = pubData.layoutDoc || {};
+
+        // Fetch full admin plots (including confidential buyer & payment milestone tracking)
+        const plotRes = await adminFetch('/api/admin/plots');
+        if (plotRes.ok) {
+          const plotData = await plotRes.json();
+          cachedPlots = plotData.plots || [];
+        } else {
+          cachedPlots = pubData.plots || [];
+        }
 
         // Fetch full admin properties (with owner contact & internal price)
         const propRes = await adminFetch('/api/admin/properties');
